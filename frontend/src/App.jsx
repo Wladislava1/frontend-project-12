@@ -11,7 +11,7 @@ const App = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = React.useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     if (token && user) {
