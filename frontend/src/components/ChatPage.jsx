@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectCurrentToken, selectCurrentUser } from '../slices/AuthSlice.js';
 import { setChannels, addChannel, removeChannel, selectChannels } from '../slices/ChannelsSlice.js';
 import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice.js';
+import { io } from 'socket.io-client';
 import axios from 'axios';
 
 export const ChatPage = () => {
@@ -10,11 +11,28 @@ export const ChatPage = () => {
   const user = useSelector(selectCurrentUser);
   const channels = useSelector(selectChannels);
   const messages = useSelector(selectMessages);
+  const [socket, setSocket] = useState(null);
+  const [isConnected, setIsConnected] = useState(true);
   const dispatch = useDispatch();
 
   const [selectedChannelId, setSelectedChannelId] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const socketConnection = io('http://localhost:5002');
+    setSocket(socketConnection);
+
+    socketConnection.on('newMessage', (newMessage) => {
+      dispatch(addMessage(newMessage));
+    });
+    socketConnection.on('connect', () => setIsConnected(true));
+    socketConnection.on('disconnect', () => setIsConnected(false));
+
+    return () => {
+      socketConnection.disconnect();
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchChatData = async () => {
@@ -94,7 +112,6 @@ export const ChatPage = () => {
         },
         config
       );
-      dispatch(addMessage(response.data));
       setNewMessage('');
     } catch (error) {
       console.error('Ошибка отправки сообщения:', error);
@@ -114,6 +131,12 @@ export const ChatPage = () => {
           <button type="button" className="btn btn-primary">Выйти</button>
         </div>
       </nav>
+      {!isConnected && (
+        <div className='alert alert-danger' role='alert'>
+          Потеряно соединение с сервером. Попробуйте снова позже.
+        </div>
+      )}
+
       <div className="container h-100 my-4 overflow-hidden rounded shadow vh-100">
         <div className="row h-100 bg-white flex-md-row">
           <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">

@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Wladislava1/frontend-project-12#readme",
   "dependencies": {
-    "@hexlet/chat-server": "^2.0.4"
+    "@hexlet/chat-server": "^2.0.4",
+    "socket.io": "^4.8.1"
   }
 }
