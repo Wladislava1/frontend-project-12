@@ -1,23 +1,46 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCurrentToken, selectCurrentUser } from '../slices/AuthSlice.js';
 import { setChannels, addChannel, removeChannel, selectChannels } from '../slices/ChannelsSlice.js';
 import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice.js';
 import { io } from 'socket.io-client';
 import axios from 'axios';
+import { AddChannelModal } from './ModalWindow.jsx';
+import DeleteChannelModal from './ModalWindowDelete.jsx';
+import RenameChannelModal from './ModalWindowRenameChannel.jsx';
 
 export const ChatPage = () => {
+  const menuRef = useRef(null);
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const channels = useSelector(selectChannels);
   const messages = useSelector(selectMessages);
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(true);
+  const [modalShow, setModalShow] = useState(false);
+  const [menuChannelId, setMenuChannelId] = useState(null);
   const dispatch = useDispatch();
-
   const [selectedChannelId, setSelectedChannelId] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteModalShow, setDeleteModalShow] = useState(false);
+  const [channelToDelete, setChannelToDelete] = useState(null);
+  const [renameModalShow, setRenameModalShow] = useState(false);
+  const [channelToRename, setChannelToRename] = useState(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuChannelId(null);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+  
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const socketConnection = io('http://localhost:5002');
@@ -60,29 +83,59 @@ export const ChatPage = () => {
     }
   }, [token, dispatch]);
 
-  const handleAddChannel = async () => {
+  const openRenameModal = (channel) => {
+    setChannelToRename(channel);
+    setRenameModalShow(true);
+  };
+
+  const handleOpenModal = () => {
+    setModalShow(true);
+  };
+  const handleRenameChannel = async (newName) => {
+    if (!channelToRename) return;
+  
     try {
-      const newChannelData = { name: 'Новый канал', removable: true };
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const response = await axios.patch(`/api/v1/channels/${channelToRename.id}`, { name: newName }, config);
+  
+      dispatch(setChannels(
+        channels.map(ch => ch.id === channelToRename.id ? response.data : ch)
+      ));
+  
+      setRenameModalShow(false);
+      setChannelToRename(null);
+    } catch (error) {
+      console.error('Ошибка при переименовании канала:', error);
+    }
+  };
+
+  const handleAddChannel = async (channelName) => {
+    try {
+      const newChannelData = { name: channelName, removable: true };
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.post('/api/v1/channels', newChannelData, config);
       dispatch(addChannel(response.data));
       setSelectedChannelId(response.data.id);
+      setModalShow(false); 
     } catch (error) {
       console.error('Ошибка при добавлении канала:', error);
     }
   };
 
-  const handleDeleteChannel = async (channelId) => {
+  const handleDeleteChannel = async () => {
+    if (!channelToDelete) return;
+
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.delete(`/api/v1/channels/${channelId}`, config);
+      await axios.delete(`/api/v1/channels/${channelToDelete}`, config);
 
-      const updatedChannels = channels.filter((ch) => ch.id !== channelId);
-      dispatch(removeChannel(channelId));
-
-      if (selectedChannelId === channelId) {
+      dispatch(removeChannel(channelToDelete));
+      if (selectedChannelId === channelToDelete) {
+        const updatedChannels = channels.filter(ch => ch.id !== channelToDelete);
         setSelectedChannelId(updatedChannels.length > 0 ? updatedChannels[0].id : null);
       }
+      setDeleteModalShow(false);
+      setChannelToDelete(null);
     } catch (error) {
       console.error('Ошибка при удалении канала:', error);
     }
@@ -142,13 +195,19 @@ export const ChatPage = () => {
           <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
             <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
               <b>Каналы</b>
-              <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={handleAddChannel} aria-label="add chanel">
+              <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={handleOpenModal} aria-label="add chanel">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
                   <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"></path>
                   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
                 </svg>
                 <span className="visually-hidden">+</span>
               </button>
+              <AddChannelModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+                existingChannels={channels.map((ch) => ch.name)}
+                onAddChannel={handleAddChannel}
+              />
             </div>
             <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
               {channels.map((channel) => (
@@ -161,16 +220,51 @@ export const ChatPage = () => {
                       }`}
                       onClick={() => setSelectedChannelId(channel.id)}
                     >
-                      <span>#</span>{channel.name}
+                      <span># </span>{channel.name}
                     </button>
-                    {channel.removable && channel.id === selectedChannelId && (
+                    {channel.removable && (
+                    <div className="position-relative">
                       <button
                         type="button"
-                        className="btn btn-secondary rounded-0"
-                        aria-label={`Delete channel ${channel.name}`}
-                        onClick={() => handleDeleteChannel(channel.id)}
-                      >-</button>
-                    )}
+                        className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn rounded-0 ${
+                          channel.id === selectedChannelId ? 'btn-secondary' : 'btn-light'}`}
+                        aria-label={`Управление каналом ${channel.name}`}
+                        onClick={() => setMenuChannelId(menuChannelId === channel.id ? null : channel.id)}
+                      >
+                        <span class="visually-hidden">Управление каналом</span>
+                      </button>
+
+                      {menuChannelId === channel.id && (
+                        <div 
+                          ref={menuRef}
+                          className="position-absolute bg-white border rounded shadow-sm"
+                          style={{ right: 0, top: '100%', zIndex: 1000 }}
+                        >
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() => {
+                              setChannelToDelete(channel.id);
+                              setDeleteModalShow(true);       
+                              setMenuChannelId(null);         
+                            }}
+                          >
+                            Удалить
+                          </button>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() => {
+                              openRenameModal(channel);
+                              setMenuChannelId(null);
+                            }}
+                          >
+                            Переименовать
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   </div>
                 </li>
               ))}
@@ -209,6 +303,18 @@ export const ChatPage = () => {
           </div>
         </div>
       </div>
+      <DeleteChannelModal
+        show={deleteModalShow}
+        onHide={() => setDeleteModalShow(false)}
+        onConfirm={handleDeleteChannel}
+      />
+      <RenameChannelModal
+        show={renameModalShow}
+        onHide={() => setRenameModalShow(false)}
+        onRenameChannel={handleRenameChannel}
+        existingChannels={channels.map(ch => ch.name)}
+        currentName={channelToRename?.name || ''}
+      />
     </div>
   );
 };
