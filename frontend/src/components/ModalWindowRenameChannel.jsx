@@ -48,9 +48,9 @@ const RenameChannelModal = ({ show, onHide, onRenameChannel, existingChannels, c
                 <Field
                   id="name"
                   name="name"
+                  autoFocus
                   className={`mb-2 form-control ${errors.name && touched.name ? 'is-invalid' : ''}`}
                   autoComplete="off"
-                  autoFocus
                 />
                 <label htmlFor="name" className="visually-hidden">Имя канала</label>
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />

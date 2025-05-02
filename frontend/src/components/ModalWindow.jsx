@@ -34,6 +34,7 @@ export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }
                 <Field
                   name="name"
                   type="text"
+                  autoFocus
                   className={`form-control ${errors.name && touched.name ? 'is-invalid' : ''}`}
                   placeholder="Имя канала"
                   autoComplete="off"
