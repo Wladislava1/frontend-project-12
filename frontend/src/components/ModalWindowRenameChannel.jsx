@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap'; // если используете react-bootstrap
+import { Modal, Button } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 

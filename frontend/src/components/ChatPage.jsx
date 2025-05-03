@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectCurrentToken, selectCurrentUser } from '../slices/AuthSlice.js';
+import { selectCurrentToken, selectCurrentUser, setCredentials } from '../slices/AuthSlice.js';
 import { setChannels, addChannel, removeChannel, selectChannels } from '../slices/ChannelsSlice.js';
 import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice.js';
 import { io } from 'socket.io-client';
@@ -11,6 +12,7 @@ import RenameChannelModal from './ModalWindowRenameChannel.jsx';
 
 export const ChatPage = () => {
   const menuRef = useRef(null);
+  const navigate = useNavigate();
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const channels = useSelector(selectChannels);
@@ -82,6 +84,13 @@ export const ChatPage = () => {
       fetchChatData();
     }
   }, [token, dispatch]);
+
+  const handleLogout = () => {
+    dispatch(setCredentials({ user: null, token: null }));
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login', { replace: true });
+  };
 
   const openRenameModal = (channel) => {
     setChannelToRename(channel);
@@ -180,8 +189,12 @@ export const ChatPage = () => {
     <div className="d-flex flex-column h-100">
       <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
         <div className="container">
-          <a className="navbar-brand" href="/">Hexlet Chat</a>
-          <button type="button" className="btn btn-primary">Выйти</button>
+          <Link className="navbar-brand">
+            Hexlet Chat
+          </Link>
+          <button type="button" className="btn btn-primary" onClick={handleLogout}>
+            Выйти
+          </button>
         </div>
       </nav>
       {!isConnected && (

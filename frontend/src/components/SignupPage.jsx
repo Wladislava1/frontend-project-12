@@ -1,0 +1,145 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, Link } from 'react-router-dom';
+import { setCredentials, selectCurrentUser } from '../slices/AuthSlice.js';
+
+export const SignupPage = () => {
+  const [serverError, setServerError] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector(selectCurrentUser);
+
+  const validationSchema = Yup.object({
+    username: Yup.string()
+      .min(3, 'Минимум 3 символа')
+      .max(20, 'Максимум 20 символов')
+      .required(),
+    password: Yup.string()
+      .min(6, 'Минимум 6 символов')
+      .required(),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
+      .required(),
+  });
+
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setServerError('');
+    try {
+      const response = await axios.post('/api/v1/signup', {
+        username: values.username.trim(),
+        password: values.password,
+      });
+      const { token, username } = response.data;
+      const user = { username };
+      dispatch(setCredentials({ user, token }));
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/', { replace: true });
+    } catch (error) {
+      if (error.response?.status === 409) {
+        setServerError('Пользователь с таким именем уже существует');
+      } else {
+        setServerError('Ошибка сервера. Попробуйте позже.');
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleLogout = () => {
+      dispatch(setCredentials({ user: null, token: null })); 
+      localStorage.removeItem('token');                      
+      localStorage.removeItem('user');                       
+      navigate('/login', { replace: true });
+  };
+
+  return (
+    <>
+      <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
+        <div className="container">
+          <Link className="navbar-brand" to="/">
+            Hexlet Chat
+          </Link>
+          {user && (
+            <button type="button" className="btn btn-primary" onClick={handleLogout}>
+              Выйти
+            </button>
+          )}
+        </div>
+      </nav>
+
+      <div className="d-flex flex-column justify-content-center align-items-center mt-5">
+        <Formik
+          initialValues={{ username: '', password: '', confirmPassword: '' }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className="col-12 col-md-6 mt-3 mt-md-0">
+              <h1 className="text-center mb-4">Регистрация</h1>
+
+              {serverError && (
+                <div className="alert alert-danger" role="alert">
+                  {serverError}
+                </div>
+              )}
+
+              <div className="form-floating mb-3">
+                <Field
+                  name="username"
+                  id="username"
+                  type="text"
+                  className="form-control"
+                  placeholder="Имя пользователя"
+                  autoComplete="username"
+                  required
+                />
+                <label htmlFor="username">Имя пользователя</label>
+                <ErrorMessage name="username" component="div" className="invalid-feedback d-block" />
+              </div>
+
+              <div className="form-floating mb-3">
+                <Field
+                  name="password"
+                  id="password"
+                  type="password"
+                  className="form-control"
+                  placeholder="Пароль"
+                  autoComplete="new-password"
+                  required
+                />
+                <label htmlFor="password">Пароль</label>
+                <ErrorMessage name="password" component="div" className="invalid-feedback d-block" />
+              </div>
+
+              <div className="form-floating mb-4">
+                <Field
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  type="password"
+                  className="form-control"
+                  placeholder="Подтвердите пароль"
+                  autoComplete="new-password"
+                  required
+                />
+                <label htmlFor="confirmPassword">Подтвердите пароль</label>
+                <ErrorMessage name="confirmPassword" component="div" className="invalid-feedback d-block" />
+              </div>
+
+              <button
+                type="submit"
+                className="w-100 mb-3 btn btn-outline-primary"
+                disabled={isSubmitting}
+              >
+                Зарегистрироваться
+              </button>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </>
+  );
+};
