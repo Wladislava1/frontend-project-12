@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from 'react-redux';
 import App from './App.jsx'
 import store from './slices/index.js';
+import './i18n';
 
 const root = document.getElementById("root");
 

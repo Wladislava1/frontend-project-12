@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -11,18 +12,19 @@ export const SignupPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(selectCurrentUser);
+  const { t } = useTranslation();
 
   const validationSchema = Yup.object({
     username: Yup.string()
       .min(3, 'Минимум 3 символа')
       .max(20, 'Максимум 20 символов')
-      .required(),
+      .required('Обязательное поле'),
     password: Yup.string()
       .min(6, 'Минимум 6 символов')
-      .required(),
+      .required('Обязательное поле'),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
-      .required(),
+      .required('Обязательное поле'),
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -40,9 +42,9 @@ export const SignupPage = () => {
       navigate('/', { replace: true });
     } catch (error) {
       if (error.response?.status === 409) {
-        setServerError('Пользователь с таким именем уже существует');
+        setServerError(`${t('signup.userExists')}`);
       } else {
-        setServerError('Ошибка сервера. Попробуйте позже.');
+        setServerError(`${t('signup.serverError')}`);
       }
     } finally {
       setSubmitting(false);
@@ -65,7 +67,7 @@ export const SignupPage = () => {
           </Link>
           {user && (
             <button type="button" className="btn btn-primary" onClick={handleLogout}>
-              Выйти
+              {t('navbar.logout')}
             </button>
           )}
         </div>
@@ -79,7 +81,7 @@ export const SignupPage = () => {
         >
           {({ isSubmitting }) => (
             <Form className="col-12 col-md-6 mt-3 mt-md-0">
-              <h1 className="text-center mb-4">Регистрация</h1>
+              <h1 className="text-center mb-4">{t('signup.title')}</h1>
 
               {serverError && (
                 <div className="alert alert-danger" role="alert">
@@ -93,11 +95,11 @@ export const SignupPage = () => {
                   id="username"
                   type="text"
                   className="form-control"
-                  placeholder="Имя пользователя"
+                  placeholder={t('signup.username')}
                   autoComplete="username"
                   required
                 />
-                <label htmlFor="username">Имя пользователя</label>
+                <label htmlFor="username">{t('signup.username')}</label>
                 <ErrorMessage name="username" component="div" className="invalid-feedback d-block" />
               </div>
 
@@ -107,11 +109,11 @@ export const SignupPage = () => {
                   id="password"
                   type="password"
                   className="form-control"
-                  placeholder="Пароль"
+                  placeholder={t('signup.password')}
                   autoComplete="new-password"
                   required
                 />
-                <label htmlFor="password">Пароль</label>
+                <label htmlFor="password">{t('signup.password')}</label>
                 <ErrorMessage name="password" component="div" className="invalid-feedback d-block" />
               </div>
 
@@ -121,11 +123,11 @@ export const SignupPage = () => {
                   id="confirmPassword"
                   type="password"
                   className="form-control"
-                  placeholder="Подтвердите пароль"
+                  placeholder={t('signup.confirmPassword')}
                   autoComplete="new-password"
                   required
                 />
-                <label htmlFor="confirmPassword">Подтвердите пароль</label>
+                <label htmlFor="confirmPassword">{t('signup.confirmPassword')}</label>
                 <ErrorMessage name="confirmPassword" component="div" className="invalid-feedback d-block" />
               </div>
 
@@ -134,7 +136,7 @@ export const SignupPage = () => {
                 className="w-100 mb-3 btn btn-outline-primary"
                 disabled={isSubmitting}
               >
-                Зарегистрироваться
+                {t('signup.submit')}
               </button>
             </Form>
           )}

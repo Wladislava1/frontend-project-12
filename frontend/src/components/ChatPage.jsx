@@ -9,6 +9,7 @@ import axios from 'axios';
 import { AddChannelModal } from './ModalWindow.jsx';
 import DeleteChannelModal from './ModalWindowDelete.jsx';
 import RenameChannelModal from './ModalWindowRenameChannel.jsx';
+import { useTranslation } from 'react-i18next';
 
 export const ChatPage = () => {
   const menuRef = useRef(null);
@@ -29,6 +30,7 @@ export const ChatPage = () => {
   const [channelToDelete, setChannelToDelete] = useState(null);
   const [renameModalShow, setRenameModalShow] = useState(false);
   const [channelToRename, setChannelToRename] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -193,13 +195,13 @@ export const ChatPage = () => {
             Hexlet Chat
           </Link>
           <button type="button" className="btn btn-primary" onClick={handleLogout}>
-            Выйти
+            {t('navbar.logout')}
           </button>
         </div>
       </nav>
       {!isConnected && (
         <div className='alert alert-danger' role='alert'>
-          Потеряно соединение с сервером. Попробуйте снова позже.
+          {t('connection.lost')}
         </div>
       )}
 
@@ -207,8 +209,8 @@ export const ChatPage = () => {
         <div className="row h-100 bg-white flex-md-row">
           <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
             <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-              <b>Каналы</b>
-              <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={handleOpenModal} aria-label="add chanel">
+              <b>{t('channels.title')}</b>
+              <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={handleOpenModal} aria-label={t('channels.addChannelAriaLabel')}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
                   <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"></path>
                   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
@@ -240,11 +242,11 @@ export const ChatPage = () => {
                       <button
                         type="button"
                         className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn rounded-0 ${
-                          channel.id === selectedChannelId ? 'btn-secondary' : 'btn-light'}`}
+                        channel.id === selectedChannelId ? 'btn-secondary' : 'btn-light'}`}
                         aria-label={`Управление каналом ${channel.name}`}
                         onClick={() => setMenuChannelId(menuChannelId === channel.id ? null : channel.id)}
                       >
-                        <span class="visually-hidden">Управление каналом</span>
+                        <span class="visually-hidden">{t('channels.manageChannelAriaLabel')}</span>
                       </button>
 
                       {menuChannelId === channel.id && (
@@ -262,7 +264,7 @@ export const ChatPage = () => {
                               setMenuChannelId(null);         
                             }}
                           >
-                            Удалить
+                            {t('channels.delete')}
                           </button>
                           <button
                             type="button"
@@ -272,7 +274,7 @@ export const ChatPage = () => {
                               setMenuChannelId(null);
                             }}
                           >
-                            Переименовать
+                            {t('channels.rename')}
                           </button>
                         </div>
                       )}
@@ -287,7 +289,7 @@ export const ChatPage = () => {
             <div className="d-flex flex-column h-100">
               <div className="bg-light mb-4 p-3 shadow-sm small">
                 <p className="m-0"><b> {channels.find((ch) => ch.id === selectedChannelId)?.name || ''}</b></p>
-                <span className="text-muted">{filteredMessages.length} сообщение</span>
+                <span className="text-muted">{t('messages.messageCount', { count: filteredMessages.length })}</span>
               </div>
               <div id="messages-box" className="chat-messages overflow-auto px-5 ">
                 {filteredMessages.map((msg) => (
@@ -299,7 +301,7 @@ export const ChatPage = () => {
               <div className="mt-auto px-5 py-3">
                 <form onSubmit={handleSendMessage} novalidate="" className="py-1 border rounded-2">
                   <div className="input-group has-validation">
-                    <input name="body" aria-label="Новое сообщение" placeholder="Введите сообщение..." className="border-0 p-0 ps-2 form-control"
+                    <input name="body" aria-label="Новое сообщение" placeholder={t('messages.newMessagePlaceholder')} className="border-0 p-0 ps-2 form-control"
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       disabled={isSubmitting}/>
@@ -307,7 +309,7 @@ export const ChatPage = () => {
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
                         <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"></path>
                       </svg>
-                      <span className="visually-hidden">Отправить</span>
+                      <span className="visually-hidden">{t('messages.send')}</span>
                     </button>
                   </div>
                 </form>

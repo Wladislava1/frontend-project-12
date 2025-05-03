@@ -1,0 +1,72 @@
+{
+    "login": {
+      "title": "Войти",
+      "username": "Ваш ник",
+      "password": "Пароль",
+      "submit": "Войти",
+      "error": "Неверное имя пользователя или пароль",
+      "noAccount": "Нет аккаунта?",
+      "signup": "Регистрация"
+    },
+    "signup": {
+      "title": "Регистрация",
+      "username": "Имя пользователя",
+      "password": "Пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "submit": "Зарегистрироваться",
+      "userExists": "Пользователь с таким именем уже существует",
+      "serverError": "Ошибка сервера. Попробуйте позже.",
+      "haveAccount": "Уже есть аккаунт?",
+      "login": "Войти"
+    },
+    "navbar": {
+      "logout": "Выйти"
+    },
+    "connection": {
+    "lost": "Потеряно соединение с сервером. Попробуйте снова позже."
+    },
+    "channels": {
+      "title": "Каналы",
+      "addChannel": "Добавить канал",
+      "manageChannel": "Управление каналом",
+      "delete": "Удалить",
+      "rename": "Переименовать",
+      "addChannelAriaLabel": "Добавить канал",
+      "manageChannelAriaLabel": "Управление каналом {{channelName}}"
+    },
+    "messages": {
+      "messageCount_zero": "0 сообщений",
+      "messageCount_one": "{{count}} сообщение",
+      "messageCount_few": "{{count}} сообщения",
+      "messageCount_many": "{{count}} сообщений",
+      "newMessagePlaceholder": "Введите сообщение...",
+      "send": "Отправить"
+    },
+    "modals": {
+      "deleteChannel": {
+        "title": "Удалить канал",
+        "confirmation": "Уверены?",
+        "cancel": "Отмена",
+        "confirm": "Удалить"
+      },
+      "renameChannel": {
+        "title": "Переименовать канал",
+        "label": "Новое имя канала",
+        "cancel": "Отмена",
+        "submit": "Отправить"
+      },
+      "addChannel": {
+        "title": "Добавить канал",
+        "label": "Имя канала",
+        "cancel": "Отмена",
+        "submit": "Добавить"
+      }
+    },
+    "notFound": {
+      "alt": "Страница не найдена",
+      "descriptionLink": "Но вы можете перейти",
+      "descriptionLink1": "на главную страницу"
+    }
+}
+
+  

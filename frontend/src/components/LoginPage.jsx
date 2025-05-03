@@ -6,12 +6,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { setCredentials } from '../slices/AuthSlice.js';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../slices/AuthSlice.js';
+import { useTranslation } from 'react-i18next';
 
 export const LoginPage = () => {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
+  const { t } = useTranslation();
 
   const handleLogin = (user, token) => {
     console.log('handleLogin: user, token', user, token);
@@ -37,7 +39,7 @@ export const LoginPage = () => {
           </Link>
           {user && (
             <button type="button" className="btn btn-primary" onClick={handleLogout}>
-              Выйти
+              {t('navbar.logout')}
             </button>
           )}
         </div>
@@ -69,7 +71,7 @@ export const LoginPage = () => {
         >
             {({ isSubmitting }) => (
               <Form className="col-12 col-md-6 mt-3 mt-md-0">
-                <h1 className="text-center mb-4">Войти</h1>
+                <h1 className="text-center mb-4">{t('login.title')}</h1>
 
                 <div className="form-floating mb-3">
                   <Field
@@ -77,11 +79,11 @@ export const LoginPage = () => {
                     id="username"
                     type="text"
                     className="form-control"
-                    placeholder="Ваш ник"
+                    placeholder={t('login.username')}
                     autoComplete="username"
                     required
                   />
-                  <label htmlFor="username">Ваш ник</label>
+                  <label htmlFor="username">{t('login.username')}</label>
                 </div>
 
                 <div className="form-floating mb-4">
@@ -90,14 +92,14 @@ export const LoginPage = () => {
                     id="password"
                     type="password"
                     className={`form-control ${error ? 'is-invalid' : ''}`}
-                    placeholder="Пароль"
+                    placeholder={t('login.password')}
                     autoComplete="current-password"
                     required
                   />
-                  <label htmlFor="password">Пароль</label>
+                  <label htmlFor="password">{t('login.password')}</label>
                   {error && (
                     <div className="invalid-feedback d-block">
-                      The username or password is incorrect
+                      {t('login.error')}
                     </div>
                   )}
                 </div>
@@ -107,7 +109,7 @@ export const LoginPage = () => {
                   className="w-100 mb-3 btn btn-outline-primary"
                   disabled={isSubmitting}
                 >
-                  Войти
+                  {t('login.submit')}
                 </button>
               </Form>
             )}
@@ -115,8 +117,8 @@ export const LoginPage = () => {
         </div>
         <div className="card-footer p-4">
           <div className="text-center">
-            <span>Нет аккаунта? </span>
-            <Link to="/signup">Регистрация</Link>
+            <span>{t('login.noAccount')} </span>
+            <Link to="/signup">{t('login.signup')}</Link>
           </div>
         </div>
       </div>
