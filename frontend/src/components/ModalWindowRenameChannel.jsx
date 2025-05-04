@@ -8,10 +8,10 @@ const RenameChannelModal = ({ show, onHide, onRenameChannel, existingChannels, c
   const { t } = useTranslation();
   const validationSchema = Yup.object({
     name: Yup.string()
-      .min(3, 'Минимум 3 символа')
-      .max(20, 'Максимум 20 символов')
-      .required('Обязательное поле')
-      .notOneOf(existingChannels.filter(name => name !== currentName), 'Такое имя уже существует'),
+      .min(3, `${t('modals.errors.min')}`)
+      .max(20, `${t('modals.errors.max')}`)
+      .required(`${t('modals.errors.required')}`)
+      .notOneOf(existingChannels.filter(name => name !== currentName), `${t('modals.errors.notOneOf')}`),
   });
 
   useEffect(() => {

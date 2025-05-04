@@ -16,15 +16,15 @@ export const SignupPage = () => {
 
   const validationSchema = Yup.object({
     username: Yup.string()
-      .min(3, 'Минимум 3 символа')
-      .max(20, 'Максимум 20 символов')
-      .required('Обязательное поле'),
+      .min(3, `${t('modals.errors.min')}`)
+      .max(20, `${t('modals.errors.max')}`)
+      .required(`${t('modals.errors.required')}`),
     password: Yup.string()
-      .min(6, 'Минимум 6 символов')
-      .required('Обязательное поле'),
+      .min(6, `${t('modals.errors.password.min')}`)
+      .required(`${t('modals.errors.required')}`),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
-      .required('Обязательное поле'),
+      .oneOf([Yup.ref('password'), null], `${t('signup.confirmPassword.oneOf')}`)
+      .required(`${t('modals.errors.required')}`),
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -127,7 +127,7 @@ export const SignupPage = () => {
                   autoComplete="new-password"
                   required
                 />
-                <label htmlFor="confirmPassword">{t('signup.confirmPassword')}</label>
+                <label htmlFor="confirmPassword">{t('signup.confirmPassword.confirm')}</label>
                 <ErrorMessage name="confirmPassword" component="div" className="invalid-feedback d-block" />
               </div>
 

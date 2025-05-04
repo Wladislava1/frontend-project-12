@@ -8,10 +8,10 @@ export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }
   const { t } = useTranslation();
   const validationSchema = Yup.object({
     name: Yup.string()
-      .min(3, 'Минимум 3 символа')
-      .max(20, 'Максимум 20 символов')
-      .required('Обязательное поле')
-      .notOneOf(existingChannels, 'Такое имя уже существует'),
+      .min(3, `${t('modals.errors.min')}`)
+      .max(20, `${t('modals.errors.max')}`)
+      .required(`${t('modals.errors.required')}`)
+      .notOneOf(existingChannels, `${t('modals.errors.notOneOf')}`),
   });
 
   return (

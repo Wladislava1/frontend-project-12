@@ -7,6 +7,7 @@ import { setCredentials } from '../slices/AuthSlice.js';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../slices/AuthSlice.js';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 export const LoginPage = () => {
   const [error, setError] = useState(false);
@@ -62,8 +63,11 @@ export const LoginPage = () => {
                 const user = { username };
                 handleLogin(user, token);
               } catch (error) {
-                console.error(error);
-                setError(true);
+                if (!error.response) {
+                  toast.error(t('network.error'));
+                } else {
+                  setError(true);
+                }
               } finally {
                 setSubmitting(false);
               }

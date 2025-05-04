@@ -6,10 +6,11 @@ import { setChannels, addChannel, removeChannel, selectChannels } from '../slice
 import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice.js';
 import { io } from 'socket.io-client';
 import axios from 'axios';
-import { AddChannelModal } from './ModalWindow.jsx';
+import { AddChannelModal } from './ModalWindowAddChannel.jsx';
 import DeleteChannelModal from './ModalWindowDelete.jsx';
 import RenameChannelModal from './ModalWindowRenameChannel.jsx';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 export const ChatPage = () => {
   const menuRef = useRef(null);
@@ -115,8 +116,9 @@ export const ChatPage = () => {
   
       setRenameModalShow(false);
       setChannelToRename(null);
+      toast.success(t('channels.renamed'));
     } catch (error) {
-      console.error('Ошибка при переименовании канала:', error);
+      toast.error(t('channels.error'));
     }
   };
 
@@ -128,8 +130,9 @@ export const ChatPage = () => {
       dispatch(addChannel(response.data));
       setSelectedChannelId(response.data.id);
       setModalShow(false); 
+      toast.success(t('channels.created'));
     } catch (error) {
-      console.error('Ошибка при добавлении канала:', error);
+      toast.error(t('channels.error'));
     }
   };
 
@@ -147,8 +150,9 @@ export const ChatPage = () => {
       }
       setDeleteModalShow(false);
       setChannelToDelete(null);
+      toast.success(t('channels.deleted'));
     } catch (error) {
-      console.error('Ошибка при удалении канала:', error);
+      toast.error(t('channels.error'));
     }
   };
 
@@ -230,7 +234,7 @@ export const ChatPage = () => {
                   <div className="d-flex align-items-center">
                     <button
                       type="button"
-                      className={`w-100 rounded-0 text-start btn ${
+                      className={`w-100 rounded-0 text-start btn text-truncate ${
                         channel.id === selectedChannelId ? 'btn-secondary' : ''
                       }`}
                       onClick={() => setSelectedChannelId(channel.id)}
@@ -246,14 +250,14 @@ export const ChatPage = () => {
                         aria-label={`Управление каналом ${channel.name}`}
                         onClick={() => setMenuChannelId(menuChannelId === channel.id ? null : channel.id)}
                       >
-                        <span class="visually-hidden">{t('channels.manageChannelAriaLabel')}</span>
+                        <span className="visually-hidden">{t('channels.manageChannelAriaLabel')}</span>
                       </button>
 
                       {menuChannelId === channel.id && (
                         <div 
                           ref={menuRef}
-                          className="position-absolute bg-white border rounded shadow-sm"
-                          style={{ right: 0, top: '100%', zIndex: 1000 }}
+                          className="position-absolute bg-white border rounded shadow-sm end-0"
+                          style={{ top: '100%', zIndex: 1000 }}
                         >
                           <button
                             type="button"
@@ -299,7 +303,7 @@ export const ChatPage = () => {
                 ))}
               </div>
               <div className="mt-auto px-5 py-3">
-                <form onSubmit={handleSendMessage} novalidate="" className="py-1 border rounded-2">
+                <form onSubmit={handleSendMessage} noValidate className="py-1 border rounded-2">
                   <div className="input-group has-validation">
                     <input name="body" aria-label="Новое сообщение" placeholder={t('messages.newMessagePlaceholder')} className="border-0 p-0 ps-2 form-control"
                       value={newMessage}
@@ -307,7 +311,7 @@ export const ChatPage = () => {
                       disabled={isSubmitting}/>
                     <button type="submit" className="btn btn-group-vertical" disabled={isSubmitting || !newMessage.trim()}>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"></path>
+                        <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"></path>
                       </svg>
                       <span className="visually-hidden">{t('messages.send')}</span>
                     </button>
