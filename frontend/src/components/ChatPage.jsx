@@ -11,6 +11,7 @@ import DeleteChannelModal from './ModalWindowDelete.jsx';
 import RenameChannelModal from './ModalWindowRenameChannel.jsx';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import leoProfanity from 'leo-profanity';
 
 export const ChatPage = () => {
   const menuRef = useRef(null);
@@ -32,6 +33,7 @@ export const ChatPage = () => {
   const [renameModalShow, setRenameModalShow] = useState(false);
   const [channelToRename, setChannelToRename] = useState(null);
   const { t } = useTranslation();
+  leoProfanity.loadDictionary('ru');
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -108,7 +110,8 @@ export const ChatPage = () => {
   
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const response = await axios.patch(`/api/v1/channels/${channelToRename.id}`, { name: newName }, config);
+      const cleanName = leoProfanity.clean(newName);
+      const response = await axios.patch(`/api/v1/channels/${channelToRename.id}`, { name: cleanName }, config);
   
       dispatch(setChannels(
         channels.map(ch => ch.id === channelToRename.id ? response.data : ch)
@@ -124,7 +127,8 @@ export const ChatPage = () => {
 
   const handleAddChannel = async (channelName) => {
     try {
-      const newChannelData = { name: channelName, removable: true };
+      const cleanName = leoProfanity.clean(channelName.trim());
+      const newChannelData = { name: cleanName, removable: true };
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.post('/api/v1/channels', newChannelData, config);
       dispatch(addChannel(response.data));
@@ -174,7 +178,7 @@ export const ChatPage = () => {
       const response = await axios.post(
         '/api/v1/messages',
         {
-          body: newMessage.trim(),
+          body: leoProfanity.clean(newMessage.trim()),
           channelId: selectedChannelId,
           username: user.username,
         },
