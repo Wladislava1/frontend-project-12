@@ -16,8 +16,11 @@ const App = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    if (token && user) {
+    if (token && token !== 'null' && user && user !== 'null' && user.username) {
       dispatch(setCredentials({ token, user: JSON.parse(user) }));
+    } else {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
     }
   }, [dispatch]);
 

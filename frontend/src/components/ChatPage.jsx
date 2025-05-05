@@ -12,6 +12,7 @@ import RenameChannelModal from './ModalWindowRenameChannel.jsx';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import leoProfanity from 'leo-profanity';
+import { useRollbar } from '@rollbar/react';
 
 export const ChatPage = () => {
   const menuRef = useRef(null);
@@ -33,6 +34,7 @@ export const ChatPage = () => {
   const [renameModalShow, setRenameModalShow] = useState(false);
   const [channelToRename, setChannelToRename] = useState(null);
   const { t } = useTranslation();
+  const rollbar = useRollbar();
   leoProfanity.loadDictionary('ru');
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export const ChatPage = () => {
         const messagesResponse = await axios.get('/api/v1/messages', config);
         dispatch(setMessages(messagesResponse.data));
       } catch (error) {
-        console.error('Error fetching chat data:', error);
+        rollbar.error('Error fetching chat data', error);
       }
     };
 
@@ -121,6 +123,7 @@ export const ChatPage = () => {
       setChannelToRename(null);
       toast.success(t('channels.renamed'));
     } catch (error) {
+      rollbar.error('Error renaming channel', error);
       toast.error(t('channels.error'));
     }
   };
@@ -136,6 +139,7 @@ export const ChatPage = () => {
       setModalShow(false); 
       toast.success(t('channels.created'));
     } catch (error) {
+      rollbar.error('Error adding channel', error);
       toast.error(t('channels.error'));
     }
   };
@@ -156,6 +160,7 @@ export const ChatPage = () => {
       setChannelToDelete(null);
       toast.success(t('channels.deleted'));
     } catch (error) {
+      rollbar.error('Error deleting channel', error);
       toast.error(t('channels.error'));
     }
   };
@@ -186,7 +191,7 @@ export const ChatPage = () => {
       );
       setNewMessage('');
     } catch (error) {
-      console.error('Ошибка отправки сообщения:', error);
+      rollbar.error('Error sending message', error);
     } finally {
       setIsSubmitting(false);
     }

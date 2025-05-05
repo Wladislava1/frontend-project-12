@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { setCredentials, selectCurrentUser } from '../slices/AuthSlice.js';
+import { useRollbar } from '@rollbar/react';
 
 export const SignupPage = () => {
   const [serverError, setServerError] = useState('');
@@ -13,6 +14,7 @@ export const SignupPage = () => {
   const navigate = useNavigate();
   const user = useSelector(selectCurrentUser);
   const { t } = useTranslation();
+  const rollbar = useRollbar();
 
   const validationSchema = Yup.object({
     username: Yup.string()
@@ -41,6 +43,7 @@ export const SignupPage = () => {
       localStorage.setItem('user', JSON.stringify(user));
       navigate('/', { replace: true });
     } catch (error) {
+      rollbar.error('Signup error', error);
       if (error.response?.status === 409) {
         setServerError(`${t('signup.userExists')}`);
       } else {

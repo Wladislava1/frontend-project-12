@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../slices/AuthSlice.js';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { useRollbar } from '@rollbar/react';
+
 
 export const LoginPage = () => {
   const [error, setError] = useState(false);
@@ -15,9 +17,10 @@ export const LoginPage = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
   const { t } = useTranslation();
+  const rollbar = useRollbar();
+
 
   const handleLogin = (user, token) => {
-    console.log('handleLogin: user, token', user, token);
     dispatch(setCredentials({ user, token }));
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
@@ -35,7 +38,7 @@ export const LoginPage = () => {
     <>
       <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
         <div className="container">
-          <Link className="navbar-brand" to="/">
+          <Link className="navbar-brand" to={user ? "/" : "/login"}>
             Hexlet Chat
           </Link>
           {user && (
@@ -65,8 +68,10 @@ export const LoginPage = () => {
               } catch (error) {
                 if (!error.response) {
                   toast.error(t('network.error'));
+                  rollbar.error('Network error during login', error);
                 } else {
                   setError(true);
+                  rollbar.error('Login failed', error);
                 }
               } finally {
                 setSubmitting(false);
