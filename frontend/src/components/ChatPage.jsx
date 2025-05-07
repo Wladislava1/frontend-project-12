@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectCurrentToken, selectCurrentUser, setCredentials } from '../slices/AuthSlice.js';
+import { selectCurrentToken, selectCurrentUser} from '../slices/AuthSlice.js';
 import { setChannels, addChannel, removeChannel, selectChannels } from '../slices/ChannelsSlice.js';
 import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice.js';
 import { io } from 'socket.io-client';
@@ -13,10 +12,11 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import leoProfanity from 'leo-profanity';
 import { useRollbar } from '@rollbar/react';
+import Navbar from './NavBar.jsx';
+import useAuth from '../useAuth.js';
 
 export const ChatPage = () => {
   const menuRef = useRef(null);
-  const navigate = useNavigate();
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
   const channels = useSelector(selectChannels);
@@ -35,6 +35,7 @@ export const ChatPage = () => {
   const [channelToRename, setChannelToRename] = useState(null);
   const { t } = useTranslation();
   const rollbar = useRollbar();
+  const { handleLogout } = useAuth();
   leoProfanity.loadDictionary('ru');
 
   useEffect(() => {
@@ -91,13 +92,6 @@ export const ChatPage = () => {
       fetchChatData();
     }
   }, [token, dispatch]);
-
-  const handleLogout = () => {
-    dispatch(setCredentials({ user: null, token: null }));
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login', { replace: true });
-  };
 
   const openRenameModal = (channel) => {
     setChannelToRename(channel);
@@ -180,7 +174,7 @@ export const ChatPage = () => {
           Authorization: `Bearer ${token}`,
         },
       };
-      const response = await axios.post(
+      await axios.post(
         '/api/v1/messages',
         {
           body: leoProfanity.clean(newMessage.trim()),
@@ -197,21 +191,9 @@ export const ChatPage = () => {
     }
   };
 
-  console.log('Token:', token);
-  console.log('User:', user);
-
   return (
     <div className="d-flex flex-column h-100">
-      <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
-        <div className="container">
-          <Link className="navbar-brand">
-            Hexlet Chat
-          </Link>
-          <button type="button" className="btn btn-primary" onClick={handleLogout}>
-            {t('navbar.logout')}
-          </button>
-        </div>
-      </nav>
+      <Navbar user={user} onLogout={handleLogout} t={t} />
       {!isConnected && (
         <div className='alert alert-danger' role='alert'>
           {t('connection.lost')}

@@ -4,9 +4,11 @@ import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { setCredentials, selectCurrentUser } from '../slices/AuthSlice.js';
 import { useRollbar } from '@rollbar/react';
+import useAuth from '../useAuth.js';
+import Navbar from './NavBar.jsx';
 
 export const SignupPage = () => {
   const [serverError, setServerError] = useState('');
@@ -15,6 +17,7 @@ export const SignupPage = () => {
   const user = useSelector(selectCurrentUser);
   const { t } = useTranslation();
   const rollbar = useRollbar();
+  const { handleLogout } = useAuth();
 
   const validationSchema = Yup.object({
     username: Yup.string()
@@ -54,28 +57,9 @@ export const SignupPage = () => {
     }
   };
 
-  const handleLogout = () => {
-      dispatch(setCredentials({ user: null, token: null })); 
-      localStorage.removeItem('token');                      
-      localStorage.removeItem('user');                       
-      navigate('/login', { replace: true });
-  };
-
   return (
     <>
-      <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
-        <div className="container">
-          <Link className="navbar-brand" to="/">
-            Hexlet Chat
-          </Link>
-          {user && (
-            <button type="button" className="btn btn-primary" onClick={handleLogout}>
-              {t('navbar.logout')}
-            </button>
-          )}
-        </div>
-      </nav>
-
+      <Navbar user={user} onLogout={handleLogout} t={t} />
       <div className="d-flex flex-column justify-content-center align-items-center mt-5">
         <Formik
           initialValues={{ username: '', password: '', confirmPassword: '' }}

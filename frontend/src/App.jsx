@@ -9,16 +9,25 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import { SignupPage } from './components/SignupPage.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useRollbar } from '@rollbar/react';
 
 const App = () => {
   const dispatch = useDispatch();
+  const rollbar = useRollbar();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    if (token && token !== 'null' && user && user !== 'null' && user.username) {
-      dispatch(setCredentials({ token, user: JSON.parse(user) }));
-    } else {
+    const userRaw = localStorage.getItem('user');
+    try {
+      const user = JSON.parse(userRaw);
+      if (token && token !== 'null' && user && typeof user === 'object' && user.username) {
+        dispatch(setCredentials({ token, user }));
+      } else {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      }
+    } catch (e) {
+      rollbar.error('Error parsing user from localStorage', e);
       localStorage.removeItem('user');
       localStorage.removeItem('token');
     }
