@@ -5,7 +5,7 @@ import { setChannels, addChannel, removeChannel, selectChannels } from '../slice
 import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice.js'
 import { io } from 'socket.io-client'
 import axios from 'axios'
-import { AddChannelModal } from './ModalWindowAddChannel.jsx'
+import AddChannelModal from './ModalWindowAddChannel.jsx'
 import DeleteChannelModal from './ModalWindowDelete.jsx'
 import RenameChannelModal from './ModalWindowRenameChannel.jsx'
 import { useTranslation } from 'react-i18next'
