@@ -37,6 +37,7 @@ export const ChatPage = () => {
   const rollbar = useRollbar();
   const { handleLogout } = useAuth();
   leoProfanity.loadDictionary('ru');
+  leoProfanity.loadDictionary('en');
 
   useEffect(() => {
     const handleClickOutside = (event) => {
