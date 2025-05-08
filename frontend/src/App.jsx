@@ -22,11 +22,13 @@ const App = () => {
       const user = JSON.parse(userRaw)
       if (token && token !== 'null' && user && typeof user === 'object' && user.username) {
         dispatch(setCredentials({ token, user }))
-      } else {
+      }
+      else {
         localStorage.removeItem('user')
         localStorage.removeItem('token')
       }
-    } catch (e) {
+    }
+    catch (e) {
       rollbar.error('Error parsing user from localStorage', e)
       localStorage.removeItem('user')
       localStorage.removeItem('token')

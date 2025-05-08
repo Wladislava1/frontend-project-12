@@ -31,12 +31,13 @@ export default [
     plugins: {
       '@stylistic': stylistic,
       '@stylistic/jsx': stylisticJsx,
-      import: importPlugin,
-      react: reactPlugin,
+      'import': importPlugin,
+      'react': reactPlugin,
     },
     rules: {
       '@stylistic/no-trailing-spaces': 'error',
       '@stylistic/keyword-spacing': 'error',
+      '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
       '@stylistic/arrow-parens': ['error', 'always'],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/jsx-quotes': ['error', 'prefer-double'],
