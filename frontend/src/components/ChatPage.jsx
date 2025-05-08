@@ -15,7 +15,7 @@ import { useRollbar } from '@rollbar/react'
 import Navbar from './NavBar.jsx'
 import useAuth from '../useAuth.js'
 
-export const ChatPage = () => {
+const ChatPage = () => {
   const menuRef = useRef(null)
   const token = useSelector(selectCurrentToken)
   const user = useSelector(selectCurrentUser)
@@ -330,3 +330,5 @@ export const ChatPage = () => {
     </div>
   )
 }
+
+export default ChatPage

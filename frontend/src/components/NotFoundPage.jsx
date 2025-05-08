@@ -5,7 +5,7 @@ import Navbar from './NavBar'
 import useAuth from '../useAuth.js'
 import iSvg from '../assets/i.svg'
 
-export const NotFoundPage = () => {
+const NotFoundPage = () => {
   const { t } = useTranslation()
   const user = useSelector(selectCurrentUser)
   const { handleLogout } = useAuth()
@@ -21,3 +21,5 @@ export const NotFoundPage = () => {
     </>
   )
 }
+
+export default NotFoundPage

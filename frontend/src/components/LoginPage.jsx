@@ -12,7 +12,7 @@ import { useRollbar } from '@rollbar/react'
 import useAuth from '../useAuth.js'
 import Navbar from './NavBar.jsx'
 
-export const LoginPage = () => {
+const LoginPage = () => {
   const [error, setError] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -117,3 +117,5 @@ export const LoginPage = () => {
     </>
   )
 }
+
+export default LoginPage

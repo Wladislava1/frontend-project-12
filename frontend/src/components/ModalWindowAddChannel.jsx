@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 
-export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }) => {
+const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }) => {
   const { t } = useTranslation()
   const validationSchema = Yup.object({
     name: Yup.string()
@@ -62,3 +62,5 @@ export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }
     </Modal>
   )
 }
+
+export default AddChannelModal
