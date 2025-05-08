@@ -3,12 +3,11 @@ import axios from 'axios'
 import { Formik, Form, Field } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, Link } from 'react-router-dom'
-
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { useRollbar } from '@rollbar/react'
 import { setCredentials, selectCurrentUser } from '../slices/AuthSlice'
-
+import { routes } from '../api/routes.js'
 import useAuth from '../useAuth'
 import Navbar from './NavBar.jsx'
 
@@ -42,7 +41,7 @@ const LoginPage = () => {
               }
               setError(false)
               try {
-                const response = await axios.post('/api/v1/login', trimmedValues)
+                const response = await axios.post(routes.login(), trimmedValues)
                 console.log(response.data)
                 const { token, username } = response.data
                 const user = { username }

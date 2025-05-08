@@ -16,6 +16,7 @@ import DeleteChannelModal from './ModalWindowDelete.jsx'
 import RenameChannelModal from './ModalWindowRenameChannel.jsx'
 import Navbar from './NavBar.jsx'
 import useAuth from '../useAuth'
+import { routes } from '../api/routes.js'
 
 const ChatPage = () => {
   const menuRef = useRef(null)
@@ -79,13 +80,13 @@ const ChatPage = () => {
             Authorization: `Bearer ${token}`,
           },
         }
-        const channelsResponse = await axios.get('/api/v1/channels', config)
+        const channelsResponse = await axios.get(routes.channels(), config)
         dispatch(setChannels(channelsResponse.data))
         if (channelsResponse.data.length > 0) {
           setSelectedChannelId(channelsResponse.data[0].id)
         }
 
-        const messagesResponse = await axios.get('/api/v1/messages', config)
+        const messagesResponse = await axios.get(routes.messages(), config)
         dispatch(setMessages(messagesResponse.data))
       }
       catch (error) {
@@ -112,7 +113,7 @@ const ChatPage = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } }
       const cleanName = leoProfanity.clean(newName)
-      const response = await axios.patch(`/api/v1/channels/${channelToRename.id}`, { name: cleanName }, config)
+      const response = await axios.patch(routes.channelById(channelToRename.id), { name: cleanName }, config)
 
       dispatch(setChannels(
         channels.map(ch => (ch.id === channelToRename.id ? response.data : ch)),
@@ -133,7 +134,7 @@ const ChatPage = () => {
       const cleanName = leoProfanity.clean(channelName.trim())
       const newChannelData = { name: cleanName, removable: true }
       const config = { headers: { Authorization: `Bearer ${token}` } }
-      const response = await axios.post('/api/v1/channels', newChannelData, config)
+      const response = await axios.post(routes.channels(), newChannelData, config)
       dispatch(addChannel(response.data))
       setSelectedChannelId(response.data.id)
       setModalShow(false)
@@ -150,7 +151,7 @@ const ChatPage = () => {
 
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } }
-      await axios.delete(`/api/v1/channels/${channelToDelete}`, config)
+      await axios.delete(routes.channelById(channelToDelete), config)
 
       dispatch(removeChannel(channelToDelete))
       if (selectedChannelId === channelToDelete) {
@@ -183,7 +184,7 @@ const ChatPage = () => {
         },
       }
       await axios.post(
-        '/api/v1/messages',
+        routes.messages(),
         {
           body: leoProfanity.clean(newMessage.trim()),
           channelId: selectedChannelId,

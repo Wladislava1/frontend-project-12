@@ -11,6 +11,7 @@ import { useRollbar } from '@rollbar/react'
 import { setCredentials, selectCurrentUser } from '../slices/AuthSlice'
 import useAuth from '../useAuth'
 import Navbar from './NavBar.jsx'
+import { routes } from '../api/routes.js'
 
 const SignupPage = () => {
   const [serverError, setServerError] = useState('')
@@ -37,7 +38,7 @@ const SignupPage = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     setServerError('')
     try {
-      const response = await axios.post('/api/v1/signup', {
+      const response = await axios.post(routes.signup(), {
         username: values.username.trim(),
         password: values.password,
       })
