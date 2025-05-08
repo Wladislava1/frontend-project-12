@@ -47,15 +47,18 @@ const LoginPage = () => {
                 const { token, username } = response.data
                 const user = { username }
                 handleLogin(user, token)
-              } catch (error) {
+              }
+              catch (error) {
                 if (!error.response) {
                   toast.error(t('network.error'))
                   rollbar.error('Network error during login', error)
-                } else {
+                }
+                else {
                   setError(true)
                   rollbar.error('Login failed', error)
                 }
-              } finally {
+              }
+              finally {
                 setSubmitting(false)
               }
             }}

@@ -87,7 +87,8 @@ const ChatPage = () => {
 
         const messagesResponse = await axios.get('/api/v1/messages', config)
         dispatch(setMessages(messagesResponse.data))
-      } catch (error) {
+      }
+      catch (error) {
         rollbar.error('Error fetching chat data', error)
       }
     }
@@ -120,7 +121,8 @@ const ChatPage = () => {
       setRenameModalShow(false)
       setChannelToRename(null)
       toast.success(t('channels.renamed'))
-    } catch (error) {
+    }
+    catch (error) {
       rollbar.error('Error renaming channel', error)
       toast.error(t('channels.error'))
     }
@@ -136,7 +138,8 @@ const ChatPage = () => {
       setSelectedChannelId(response.data.id)
       setModalShow(false)
       toast.success(t('channels.created'))
-    } catch (error) {
+    }
+    catch (error) {
       rollbar.error('Error adding channel', error)
       toast.error(t('channels.error'))
     }
@@ -157,7 +160,8 @@ const ChatPage = () => {
       setDeleteModalShow(false)
       setChannelToDelete(null)
       toast.success(t('channels.deleted'))
-    } catch (error) {
+    }
+    catch (error) {
       rollbar.error('Error deleting channel', error)
       toast.error(t('channels.error'))
     }
@@ -188,9 +192,11 @@ const ChatPage = () => {
         config,
       )
       setNewMessage('')
-    } catch (error) {
+    }
+    catch (error) {
       rollbar.error('Error sending message', error)
-    } finally {
+    }
+    finally {
       setIsSubmitting(false)
     }
   }

@@ -47,14 +47,17 @@ const SignupPage = () => {
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(user))
       navigate('/', { replace: true })
-    } catch (error) {
+    }
+    catch (error) {
       rollbar.error('Signup error', error)
       if (error.response?.status === 409) {
         setServerError(`${t('signup.userExists')}`)
-      } else {
+      }
+      else {
         setServerError(`${t('signup.serverError')}`)
       }
-    } finally {
+    }
+    finally {
       setSubmitting(false)
     }
   }
