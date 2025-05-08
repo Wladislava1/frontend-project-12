@@ -33,6 +33,9 @@ export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }
           <Form>
             <Modal.Body>
               <div className="mb-3">
+              <label htmlFor="channel-name" className="form-label">
+                {t('modals.addChannel.label')}
+              </label>
                 <Field
                   name="name"
                   type="text"
