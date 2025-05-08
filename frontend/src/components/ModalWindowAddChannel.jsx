@@ -37,6 +37,7 @@ export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }
                 {t('modals.addChannel.label')}
               </label>
                 <Field
+                  id="channel-name"  
                   name="name"
                   type="text"
                   autoFocus
