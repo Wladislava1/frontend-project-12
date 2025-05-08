@@ -10,7 +10,7 @@ import { useRollbar } from '@rollbar/react'
 import useAuth from '../useAuth.js'
 import Navbar from './NavBar.jsx'
 
-export const SignupPage = () => {
+const SignupPage = () => {
   const [serverError, setServerError] = useState('')
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -132,3 +132,5 @@ export const SignupPage = () => {
     </>
   )
 }
+
+export default SignupPage
