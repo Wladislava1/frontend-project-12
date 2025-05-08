@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from '../slices/AuthSlice.js';
-import Navbar from './NavBar';
-import useAuth from '../useAuth.js';
-import iSvg from '../assets/i.svg';
+import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '../slices/AuthSlice.js'
+import Navbar from './NavBar'
+import useAuth from '../useAuth.js'
+import iSvg from '../assets/i.svg'
 
 export const NotFoundPage = () => {
-  const { t } = useTranslation();
-  const user = useSelector(selectCurrentUser);
-  const { handleLogout } = useAuth();
+  const { t } = useTranslation()
+  const user = useSelector(selectCurrentUser)
+  const { handleLogout } = useAuth()
 
   return (
     <>

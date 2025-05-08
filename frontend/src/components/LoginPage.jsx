@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Formik, Form, Field } from 'formik';
-import { useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
-import { setCredentials } from '../slices/AuthSlice.js';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from '../slices/AuthSlice.js';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
-import { useRollbar } from '@rollbar/react';
-import useAuth from '../useAuth.js';
-import Navbar from './NavBar.jsx';
+import { useState } from 'react'
+import axios from 'axios'
+import { Formik, Form, Field } from 'formik'
+import { useDispatch } from 'react-redux'
+import { useNavigate, Link } from 'react-router-dom'
+import { setCredentials } from '../slices/AuthSlice.js'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '../slices/AuthSlice.js'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { useRollbar } from '@rollbar/react'
+import useAuth from '../useAuth.js'
+import Navbar from './NavBar.jsx'
 
 export const LoginPage = () => {
-  const [error, setError] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const user = useSelector(selectCurrentUser);
-  const { t } = useTranslation();
-  const rollbar = useRollbar();
-  const { handleLogout } = useAuth();
+  const [error, setError] = useState(false)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const user = useSelector(selectCurrentUser)
+  const { t } = useTranslation()
+  const rollbar = useRollbar()
+  const { handleLogout } = useAuth()
 
 
   const handleLogin = (user, token) => {
-    dispatch(setCredentials({ user, token }));
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    navigate('/', { replace: true });
-  };
+    dispatch(setCredentials({ user, token }))
+    localStorage.setItem('token', token)
+    localStorage.setItem('user', JSON.stringify(user))
+    navigate('/', { replace: true })
+  }
 
   return (
     <>
@@ -37,27 +37,27 @@ export const LoginPage = () => {
           <Formik
             initialValues={{ username: '', password: '' }}
             onSubmit={ async (values, { setSubmitting }) => {
-                const trimmedValues = {
-                    username: values.username.trim(),
-                    password: values.password.trim(),
-                };
+              const trimmedValues = {
+                username: values.username.trim(),
+                password: values.password.trim(),
+              }
               setError(false)
               try {
-                const response = await axios.post('/api/v1/login', trimmedValues);
-                console.log(response.data);
-                const { token, username } = response.data;
-                const user = { username };
-                handleLogin(user, token);
+                const response = await axios.post('/api/v1/login', trimmedValues)
+                console.log(response.data)
+                const { token, username } = response.data
+                const user = { username }
+                handleLogin(user, token)
               } catch (error) {
                 if (!error.response) {
-                  toast.error(t('network.error'));
-                  rollbar.error('Network error during login', error);
+                  toast.error(t('network.error'))
+                  rollbar.error('Network error during login', error)
                 } else {
-                  setError(true);
-                  rollbar.error('Login failed', error);
+                  setError(true)
+                  rollbar.error('Login failed', error)
                 }
               } finally {
-                setSubmitting(false);
+                setSubmitting(false)
               }
             }}
         >
@@ -115,5 +115,5 @@ export const LoginPage = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}

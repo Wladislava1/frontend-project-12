@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { setCredentials, selectCurrentUser } from '../slices/AuthSlice.js';
-import { useRollbar } from '@rollbar/react';
-import useAuth from '../useAuth.js';
-import Navbar from './NavBar.jsx';
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import axios from 'axios'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { setCredentials, selectCurrentUser } from '../slices/AuthSlice.js'
+import { useRollbar } from '@rollbar/react'
+import useAuth from '../useAuth.js'
+import Navbar from './NavBar.jsx'
 
 export const SignupPage = () => {
-  const [serverError, setServerError] = useState('');
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const user = useSelector(selectCurrentUser);
-  const { t } = useTranslation();
-  const rollbar = useRollbar();
-  const { handleLogout } = useAuth();
+  const [serverError, setServerError] = useState('')
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const user = useSelector(selectCurrentUser)
+  const { t } = useTranslation()
+  const rollbar = useRollbar()
+  const { handleLogout } = useAuth()
 
   const validationSchema = Yup.object({
     username: Yup.string()
@@ -30,32 +30,32 @@ export const SignupPage = () => {
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password'), null], `${t('signup.confirmPassword.oneOf')}`)
       .required(`${t('modals.errors.required')}`),
-  });
+  })
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    setServerError('');
+    setServerError('')
     try {
       const response = await axios.post('/api/v1/signup', {
         username: values.username.trim(),
         password: values.password,
-      });
-      const { token, username } = response.data;
-      const user = { username };
-      dispatch(setCredentials({ user, token }));
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      navigate('/', { replace: true });
+      })
+      const { token, username } = response.data
+      const user = { username }
+      dispatch(setCredentials({ user, token }))
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify(user))
+      navigate('/', { replace: true })
     } catch (error) {
-      rollbar.error('Signup error', error);
+      rollbar.error('Signup error', error)
       if (error.response?.status === 409) {
-        setServerError(`${t('signup.userExists')}`);
+        setServerError(`${t('signup.userExists')}`)
       } else {
-        setServerError(`${t('signup.serverError')}`);
+        setServerError(`${t('signup.serverError')}`)
       }
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   return (
     <>
@@ -130,5 +130,5 @@ export const SignupPage = () => {
         </Formik>
       </div>
     </>
-  );
-};
+  )
+}

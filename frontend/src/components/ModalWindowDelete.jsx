@@ -1,22 +1,22 @@
-import React, { useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from 'react'
+import { Modal, Button } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 
 const DeleteChannelModal = ({ show, onHide, onConfirm }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   useEffect(() => {
-    if (!show) return;
+    if (!show) return
 
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') {
-        e.preventDefault();
-        onConfirm();
+        e.preventDefault()
+        onConfirm()
       }
-    };
+    }
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [show, onConfirm]);
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [show, onConfirm])
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -35,7 +35,7 @@ const DeleteChannelModal = ({ show, onHide, onConfirm }) => {
         </Button>
       </Modal.Footer>
     </Modal>
-  );
-};
+  )
+}
 
-export default DeleteChannelModal;
+export default DeleteChannelModal

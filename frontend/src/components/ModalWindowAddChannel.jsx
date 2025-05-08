@@ -1,18 +1,18 @@
-import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import React from 'react'
+import { Modal, Button } from 'react-bootstrap'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next'
 
 export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   const validationSchema = Yup.object({
     name: Yup.string()
       .min(3, `${t('modals.errors.min')}`)
       .max(20, `${t('modals.errors.max')}`)
       .required(`${t('modals.errors.required')}`)
       .notOneOf(existingChannels, `${t('modals.errors.notOneOf')}`),
-  });
+  })
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -23,10 +23,10 @@ export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }
         initialValues={{ name: '' }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          onAddChannel(values.name);
-          setSubmitting(false);
-          resetForm();
-          onHide();
+          onAddChannel(values.name)
+          setSubmitting(false)
+          resetForm()
+          onHide()
         }}
       >
         {({ errors, touched, isSubmitting }) => (
@@ -60,5 +60,5 @@ export const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }
         )}
       </Formik>
     </Modal>
-  );
-};
+  )
+}

@@ -1,33 +1,33 @@
-import React, { useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from 'react'
+import { Modal, Button } from 'react-bootstrap'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next'
 
 const RenameChannelModal = ({ show, onHide, onRenameChannel, existingChannels, currentName }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   const validationSchema = Yup.object({
     name: Yup.string()
       .min(3, `${t('modals.errors.min')}`)
       .max(20, `${t('modals.errors.max')}`)
       .required(`${t('modals.errors.required')}`)
       .notOneOf(existingChannels.filter(name => name !== currentName), `${t('modals.errors.notOneOf')}`),
-  });
+  })
 
   useEffect(() => {
-    if (!show) return;
+    if (!show) return
 
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') {
-        e.preventDefault();
-        const submitBtn = document.querySelector('#rename-submit-btn');
-        if (submitBtn) submitBtn.click();
+        e.preventDefault()
+        const submitBtn = document.querySelector('#rename-submit-btn')
+        if (submitBtn) submitBtn.click()
       }
-    };
+    }
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [show]);
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [show])
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -38,9 +38,9 @@ const RenameChannelModal = ({ show, onHide, onRenameChannel, existingChannels, c
         initialValues={{ name: currentName }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting }) => {
-          onRenameChannel(values.name);
-          setSubmitting(false);
-          onHide();
+          onRenameChannel(values.name)
+          setSubmitting(false)
+          onHide()
         }}
       >
         {({ errors, touched, isSubmitting }) => (
@@ -70,7 +70,7 @@ const RenameChannelModal = ({ show, onHide, onRenameChannel, existingChannels, c
         )}
       </Formik>
     </Modal>
-  );
-};
+  )
+}
 
-export default RenameChannelModal;
+export default RenameChannelModal

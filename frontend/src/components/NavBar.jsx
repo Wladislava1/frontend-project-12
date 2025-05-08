@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Navbar = ({ user, onLogout, t }) => (
   <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
@@ -14,6 +14,6 @@ const Navbar = ({ user, onLogout, t }) => (
       )}
     </div>
   </nav>
-);
+)
 
-export default Navbar;
+export default Navbar

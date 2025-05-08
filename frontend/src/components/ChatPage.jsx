@@ -1,182 +1,181 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectCurrentToken, selectCurrentUser} from '../slices/AuthSlice.js';
-import { setChannels, addChannel, removeChannel, selectChannels } from '../slices/ChannelsSlice.js';
-import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice.js';
-import { io } from 'socket.io-client';
-import axios from 'axios';
-import { AddChannelModal } from './ModalWindowAddChannel.jsx';
-import DeleteChannelModal from './ModalWindowDelete.jsx';
-import RenameChannelModal from './ModalWindowRenameChannel.jsx';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
-import leoProfanity from 'leo-profanity';
-import { useRollbar } from '@rollbar/react';
-import Navbar from './NavBar.jsx';
-import useAuth from '../useAuth.js';
+import React, { useEffect, useState, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectCurrentToken, selectCurrentUser } from '../slices/AuthSlice.js'
+import { setChannels, addChannel, removeChannel, selectChannels } from '../slices/ChannelsSlice.js'
+import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice.js'
+import { io } from 'socket.io-client'
+import axios from 'axios'
+import { AddChannelModal } from './ModalWindowAddChannel.jsx'
+import DeleteChannelModal from './ModalWindowDelete.jsx'
+import RenameChannelModal from './ModalWindowRenameChannel.jsx'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import leoProfanity from 'leo-profanity'
+import { useRollbar } from '@rollbar/react'
+import Navbar from './NavBar.jsx'
+import useAuth from '../useAuth.js'
 
 export const ChatPage = () => {
-  const menuRef = useRef(null);
-  const token = useSelector(selectCurrentToken);
-  const user = useSelector(selectCurrentUser);
-  const channels = useSelector(selectChannels);
-  const messages = useSelector(selectMessages);
-  const [socket, setSocket] = useState(null);
-  const [isConnected, setIsConnected] = useState(true);
-  const [modalShow, setModalShow] = useState(false);
-  const [menuChannelId, setMenuChannelId] = useState(null);
-  const dispatch = useDispatch();
-  const [selectedChannelId, setSelectedChannelId] = useState(null);
-  const [newMessage, setNewMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [deleteModalShow, setDeleteModalShow] = useState(false);
-  const [channelToDelete, setChannelToDelete] = useState(null);
-  const [renameModalShow, setRenameModalShow] = useState(false);
-  const [channelToRename, setChannelToRename] = useState(null);
-  const { t } = useTranslation();
-  const rollbar = useRollbar();
-  const { handleLogout } = useAuth();
-  leoProfanity.loadDictionary('ru');
-  leoProfanity.loadDictionary('en');
+  const menuRef = useRef(null)
+  const token = useSelector(selectCurrentToken)
+  const user = useSelector(selectCurrentUser)
+  const channels = useSelector(selectChannels)
+  const messages = useSelector(selectMessages)
+  const [, setSocket] = useState(null)
+  const [isConnected, setIsConnected] = useState(true)
+  const [modalShow, setModalShow] = useState(false)
+  const [menuChannelId, setMenuChannelId] = useState(null)
+  const dispatch = useDispatch()
+  const [selectedChannelId, setSelectedChannelId] = useState(null)
+  const [newMessage, setNewMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [deleteModalShow, setDeleteModalShow] = useState(false)
+  const [channelToDelete, setChannelToDelete] = useState(null)
+  const [renameModalShow, setRenameModalShow] = useState(false)
+  const [channelToRename, setChannelToRename] = useState(null)
+  const { t } = useTranslation()
+  const rollbar = useRollbar()
+  const { handleLogout } = useAuth()
+  leoProfanity.loadDictionary('ru')
+  leoProfanity.loadDictionary('en')
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuChannelId(null);
+        setMenuChannelId(null)
       }
-    };
-  
-    document.addEventListener('mousedown', handleClickOutside);
-  
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   useEffect(() => {
-    const socketConnection = io('http://localhost:5001');
-    setSocket(socketConnection);
+    const socketConnection = io('http://localhost:5001')
+    setSocket(socketConnection)
 
     socketConnection.on('newMessage', (newMessage) => {
-      dispatch(addMessage(newMessage));
-    });
-    socketConnection.on('connect', () => setIsConnected(true));
-    socketConnection.on('disconnect', () => setIsConnected(false));
+      dispatch(addMessage(newMessage))
+    })
+    socketConnection.on('connect', () => setIsConnected(true))
+    socketConnection.on('disconnect', () => setIsConnected(false))
 
     return () => {
-      socketConnection.disconnect();
-    };
-  }, [dispatch]);
+      socketConnection.disconnect()
+    }
+  }, [dispatch])
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) return
     const fetchChatData = async () => {
       try {
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        };
-        const channelsResponse = await axios.get('/api/v1/channels', config);
-        dispatch(setChannels(channelsResponse.data));
+        }
+        const channelsResponse = await axios.get('/api/v1/channels', config)
+        dispatch(setChannels(channelsResponse.data))
         if (channelsResponse.data.length > 0) {
-          setSelectedChannelId(channelsResponse.data[0].id);
+          setSelectedChannelId(channelsResponse.data[0].id)
         }
 
-        const messagesResponse = await axios.get('/api/v1/messages', config);
-        dispatch(setMessages(messagesResponse.data));
-      } catch (error) {
-        rollbar.error('Error fetching chat data', error);
+        const messagesResponse = await axios.get('/api/v1/messages', config)
+        dispatch(setMessages(messagesResponse.data))
+      } catch(error) {
+        rollbar.error('Error fetching chat data', error)
       }
-    };
+    }
 
     if (token) {
-      fetchChatData();
+      fetchChatData()
     }
-  }, [token, dispatch]);
+  }, [token, dispatch])
 
   const openRenameModal = (channel) => {
-    setChannelToRename(channel);
-    setRenameModalShow(true);
-  };
+    setChannelToRename(channel)
+    setRenameModalShow(true)
+  }
 
   const handleOpenModal = () => {
-    setModalShow(true);
-  };
+    setModalShow(true)
+  }
   const handleRenameChannel = async (newName) => {
-    if (!channelToRename) return;
-  
+    if (!channelToRename) return
+
     try {
-      console.log(`token: ${token}`)
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      const cleanName = leoProfanity.clean(newName);
-      const response = await axios.patch(`/api/v1/channels/${channelToRename.id}`, { name: cleanName }, config);
-  
+      const config = { headers: { Authorization: `Bearer ${token}` } }
+      const cleanName = leoProfanity.clean(newName)
+      const response = await axios.patch(`/api/v1/channels/${channelToRename.id}`, { name: cleanName }, config)
+
       dispatch(setChannels(
-        channels.map(ch => ch.id === channelToRename.id ? response.data : ch)
-      ));
-  
-      setRenameModalShow(false);
-      setChannelToRename(null);
-      toast.success(t('channels.renamed'));
-    } catch (error) {
-      rollbar.error('Error renaming channel', error);
-      toast.error(t('channels.error'));
+        channels.map(ch => ch.id === channelToRename.id ? response.data : ch),
+      ))
+
+      setRenameModalShow(false)
+      setChannelToRename(null)
+      toast.success(t('channels.renamed'))
+    } catch(error) {
+      rollbar.error('Error renaming channel', error)
+      toast.error(t('channels.error'))
     }
-  };
+  }
 
   const handleAddChannel = async (channelName) => {
     try {
-      const cleanName = leoProfanity.clean(channelName.trim());
-      const newChannelData = { name: cleanName, removable: true };
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      const response = await axios.post('/api/v1/channels', newChannelData, config);
-      dispatch(addChannel(response.data));
-      setSelectedChannelId(response.data.id);
-      setModalShow(false); 
-      toast.success(t('channels.created'));
+      const cleanName = leoProfanity.clean(channelName.trim())
+      const newChannelData = { name: cleanName, removable: true }
+      const config = { headers: { Authorization: `Bearer ${token}` } }
+      const response = await axios.post('/api/v1/channels', newChannelData, config)
+      dispatch(addChannel(response.data))
+      setSelectedChannelId(response.data.id)
+      setModalShow(false) 
+      toast.success(t('channels.created'))
     } catch (error) {
-      rollbar.error('Error adding channel', error);
-      toast.error(t('channels.error'));
+      rollbar.error('Error adding channel', error)
+      toast.error(t('channels.error'))
     }
-  };
+  }
 
   const handleDeleteChannel = async () => {
-    if (!channelToDelete) return;
+    if (!channelToDelete) return
 
     try {
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.delete(`/api/v1/channels/${channelToDelete}`, config);
+      const config = { headers: { Authorization: `Bearer ${token}` } }
+      await axios.delete(`/api/v1/channels/${channelToDelete}`, config)
 
-      dispatch(removeChannel(channelToDelete));
+      dispatch(removeChannel(channelToDelete))
       if (selectedChannelId === channelToDelete) {
-        const updatedChannels = channels.filter(ch => ch.id !== channelToDelete);
-        setSelectedChannelId(updatedChannels.length > 0 ? updatedChannels[0].id : null);
+        const updatedChannels = channels.filter(ch => ch.id !== channelToDelete)
+        setSelectedChannelId(updatedChannels.length > 0 ? updatedChannels[0].id : null)
       }
-      setDeleteModalShow(false);
-      setChannelToDelete(null);
-      toast.success(t('channels.deleted'));
+      setDeleteModalShow(false)
+      setChannelToDelete(null)
+      toast.success(t('channels.deleted'))
     } catch (error) {
-      rollbar.error('Error deleting channel', error);
-      toast.error(t('channels.error'));
+      rollbar.error('Error deleting channel', error)
+      toast.error(t('channels.error'))
     }
-  };
+  }
 
   const filteredMessages = messages.filter(
     (msg) => msg.channelId === selectedChannelId
-  );
+  )
 
   const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
+    e.preventDefault()
+    if (!newMessage.trim()) return
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
     try {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      };
+      }
       await axios.post(
         '/api/v1/messages',
         {
@@ -185,14 +184,14 @@ export const ChatPage = () => {
           username: user.username,
         },
         config
-      );
-      setNewMessage('');
+      ),
+      setNewMessage('')
     } catch (error) {
-      rollbar.error('Error sending message', error);
+      rollbar.error('Error sending message', error)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <div className="d-flex flex-column h-100">
@@ -257,9 +256,9 @@ export const ChatPage = () => {
                             type="button"
                             className="dropdown-item"
                             onClick={() => {
-                              setChannelToDelete(channel.id);
-                              setDeleteModalShow(true);       
-                              setMenuChannelId(null);         
+                              setChannelToDelete(channel.id)
+                              setDeleteModalShow(true)       
+                              setMenuChannelId(null)         
                             }}
                           >
                             {t('channels.delete')}
@@ -268,8 +267,8 @@ export const ChatPage = () => {
                             type="button"
                             className="dropdown-item"
                             onClick={() => {
-                              openRenameModal(channel);
-                              setMenuChannelId(null);
+                              openRenameModal(channel)
+                              setMenuChannelId(null)
                             }}
                           >
                             {t('channels.rename')}
@@ -329,5 +328,5 @@ export const ChatPage = () => {
         currentName={channelToRename?.name || ''}
       />
     </div>
-  );
-};
+  )
+}
