@@ -15,7 +15,7 @@ const RenameChannelModal = ({
       .min(3, `${t('modals.errors.min')}`)
       .max(20, `${t('modals.errors.max')}`)
       .required(`${t('modals.errors.required')}`)
-      .notOneOf(existingChannels.filter((name) => name !== currentName), `${t('modals.errors.notOneOf')}`),
+      .notOneOf(existingChannels.filter(name => name !== currentName), `${t('modals.errors.notOneOf')}`),
   })
 
   useEffect(() => {

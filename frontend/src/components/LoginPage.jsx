@@ -35,7 +35,7 @@ const LoginPage = () => {
         <div className="d-flex flex-column justify-content-center align-items-center mt-5">
           <Formik
             initialValues={{ username: '', password: '' }}
-            onSubmit={ async (values, { setSubmitting }) => {
+            onSubmit={async (values, { setSubmitting }) => {
               const trimmedValues = {
                 username: values.username.trim(),
                 password: values.password.trim(),
