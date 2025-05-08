@@ -1,57 +1,59 @@
-import globals from 'globals'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
-import pluginJs from '@eslint/js'
+import babelEslintParser from '@babel/eslint-parser'
+import stylistic from '@stylistic/eslint-plugin'
+import stylisticJsx from '@stylistic/eslint-plugin-jsx'
 import importPlugin from 'eslint-plugin-import'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: pluginJs.configs.recommended,
-})
+import reactPlugin from 'eslint-plugin-react'
+import globals from 'globals'
 
 export default [
   {
-    ignores: ['dist/'],
+    ignores: ['dist/', 'node_modules/'],
   },
   {
+    files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-        ...globals.browser,
-      },
+      parser: babelEslintParser,
       parserOptions: {
+        requireConfigFile: false,
+        babelOptions: {
+          presets: ['@babel/preset-react', '@babel/preset-env'],
+        },
         ecmaVersion: 'latest',
         sourceType: 'module',
+        ecmaFeatures: { jsx: true },
+      },
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+        ...globals.jest,
       },
     },
-    plugins: { import: importPlugin },
-    rules: {
-      ...importPlugin.configs.recommended.rules,
+    plugins: {
+      '@stylistic': stylistic,
+      '@stylistic/jsx': stylisticJsx,
+      import: importPlugin,
+      react: reactPlugin,
     },
-  },
-  ...compat.extends('airbnb-base'),
-  {
     rules: {
-      'no-underscore-dangle': [
-        'error',
-        {
-          allow: ['__filename', '__dirname'],
-        },
-      ],
-      'import/extensions': [
-        'error',
-        {
-          js: 'always',
-        },
-      ],
-      'import/no-named-as-default': 'off',
-      'import/no-named-as-default-member': 'off',
+      '@stylistic/no-trailing-spaces': 'error',
+      '@stylistic/keyword-spacing': 'error',
+      '@stylistic/arrow-parens': ['error', 'always'],
+      '@stylistic/comma-dangle': ['error', 'always-multiline'],
+      '@stylistic/jsx-quotes': ['error', 'prefer-double'],
+      '@stylistic/indent': ['error', 2],
+      '@stylistic/jsx-one-expression-per-line': 'error',
+      '@stylistic/jsx-closing-tag-location': 'error',
+      '@stylistic/jsx-first-prop-new-line': ['error', 'multiline-multiprop'],
+      '@stylistic/jsx-max-props-per-line': ['error', { maximum: 1, when: 'multiline' }],
+      '@stylistic/jsx-closing-bracket-location': 'error',
+      '@stylistic/jsx-tag-spacing': 'error',
+      '@stylistic/eol-last': 'error',
+      '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
+      '@stylistic/semi': ['error', 'never'],
+      'no-unused-vars': 'warn',
       'no-console': 'off',
-      'import/no-extraneous-dependencies': 'off',
+      'react/react-in-jsx-scope': 'off',
+      'import/extensions': 'off',
     },
   },
 ]

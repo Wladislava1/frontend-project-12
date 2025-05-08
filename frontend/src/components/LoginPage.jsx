@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { Formik, Form, Field } from 'formik'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, Link } from 'react-router-dom'
-import { setCredentials } from '../slices/AuthSlice.js'
-import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '../slices/AuthSlice.js'
+
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { useRollbar } from '@rollbar/react'
-import useAuth from '../useAuth.js'
+import { setCredentials, selectCurrentUser } from '../slices/AuthSlice'
+
+import useAuth from '../useAuth'
 import Navbar from './NavBar.jsx'
 
 const LoginPage = () => {
@@ -20,7 +20,6 @@ const LoginPage = () => {
   const { t } = useTranslation()
   const rollbar = useRollbar()
   const { handleLogout } = useAuth()
-
 
   const handleLogin = (user, token) => {
     dispatch(setCredentials({ user, token }))
@@ -60,10 +59,12 @@ const LoginPage = () => {
                 setSubmitting(false)
               }
             }}
-        >
+          >
             {({ isSubmitting }) => (
               <Form className="col-12 col-md-6 mt-3 mt-md-0">
-                <h1 className="text-center mb-4">{t('login.title')}</h1>
+                <h1 className="text-center mb-4">
+                  {t('login.title')}
+                </h1>
 
                 <div className="form-floating mb-3">
                   <Field
@@ -75,7 +76,9 @@ const LoginPage = () => {
                     autoComplete="username"
                     required
                   />
-                  <label htmlFor="username">{t('login.username')}</label>
+                  <label htmlFor="username">
+                    {t('login.username')}
+                  </label>
                 </div>
 
                 <div className="form-floating mb-4">
@@ -88,7 +91,9 @@ const LoginPage = () => {
                     autoComplete="current-password"
                     required
                   />
-                  <label htmlFor="password">{t('login.password')}</label>
+                  <label htmlFor="password">
+                    {t('login.password')}
+                  </label>
                   {error && (
                     <div className="invalid-feedback d-block">
                       {t('login.error')}
@@ -109,8 +114,13 @@ const LoginPage = () => {
         </div>
         <div className="card-footer p-4">
           <div className="text-center">
-            <span>{t('login.noAccount')} </span>
-            <Link to="/signup">{t('login.signup')}</Link>
+            <span>
+              {t('login.noAccount')}
+              {' '}
+            </span>
+            <Link to="/signup">
+              {t('login.signup')}
+            </Link>
           </div>
         </div>
       </div>

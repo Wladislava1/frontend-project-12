@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import axios from 'axios'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import {
+  Formik, Form, Field, ErrorMessage,
+} from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setCredentials, selectCurrentUser } from '../slices/AuthSlice.js'
 import { useRollbar } from '@rollbar/react'
-import useAuth from '../useAuth.js'
+import { setCredentials, selectCurrentUser } from '../slices/AuthSlice'
+import useAuth from '../useAuth'
 import Navbar from './NavBar.jsx'
 
 const SignupPage = () => {
@@ -68,7 +70,9 @@ const SignupPage = () => {
         >
           {({ isSubmitting }) => (
             <Form className="col-12 col-md-6 mt-3 mt-md-0">
-              <h1 className="text-center mb-4">{t('signup.title')}</h1>
+              <h1 className="text-center mb-4">
+                {t('signup.title')}
+              </h1>
 
               {serverError && (
                 <div className="alert alert-danger" role="alert">
@@ -86,7 +90,9 @@ const SignupPage = () => {
                   autoComplete="username"
                   required
                 />
-                <label htmlFor="username">{t('signup.username')}</label>
+                <label htmlFor="username">
+                  {t('signup.username')}
+                </label>
                 <ErrorMessage name="username" component="div" className="invalid-feedback d-block" />
               </div>
 
@@ -100,7 +106,9 @@ const SignupPage = () => {
                   autoComplete="new-password"
                   required
                 />
-                <label htmlFor="password">{t('signup.password')}</label>
+                <label htmlFor="password">
+                  {t('signup.password')}
+                </label>
                 <ErrorMessage name="password" component="div" className="invalid-feedback d-block" />
               </div>
 
@@ -114,7 +122,9 @@ const SignupPage = () => {
                   autoComplete="new-password"
                   required
                 />
-                <label htmlFor="confirmPassword">{t('signup.confirmPassword.confirm')}</label>
+                <label htmlFor="confirmPassword">
+                  {t('signup.confirmPassword.confirm')}
+                </label>
                 <ErrorMessage name="confirmPassword" component="div" className="invalid-feedback d-block" />
               </div>
 

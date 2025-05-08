@@ -1,10 +1,13 @@
-import React from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import {
+  Formik, Form, Field, ErrorMessage,
+} from 'formik'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 
-const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }) => {
+const AddChannelModal = ({
+  show, onHide, existingChannels, onAddChannel,
+}) => {
   const { t } = useTranslation()
   const validationSchema = Yup.object({
     name: Yup.string()
@@ -17,7 +20,9 @@ const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>{t('modals.addChannel.title')}</Modal.Title>
+        <Modal.Title>
+          {t('modals.addChannel.title')}
+        </Modal.Title>
       </Modal.Header>
       <Formik
         initialValues={{ name: '' }}
@@ -33,11 +38,11 @@ const AddChannelModal = ({ show, onHide, existingChannels, onAddChannel }) => {
           <Form>
             <Modal.Body>
               <div className="mb-3">
-              <label htmlFor="channel-name" className="form-label">
-                {t('modals.addChannel.label')}
-              </label>
+                <label htmlFor="channel-name" className="form-label">
+                  {t('modals.addChannel.label')}
+                </label>
                 <Field
-                  id="channel-name"  
+                  id="channel-name"
                   name="name"
                   type="text"
                   autoFocus

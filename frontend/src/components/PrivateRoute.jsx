@@ -1,7 +1,6 @@
-import React from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { selectCurrentToken } from '../slices/AuthSlice.js'
+import { selectCurrentToken } from '../slices/AuthSlice'
 
 const PrivateRoute = () => {
   const token = useSelector(selectCurrentToken)

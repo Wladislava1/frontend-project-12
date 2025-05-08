@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { useRollbar } from '@rollbar/react'
-import { setCredentials } from './slices/AuthSlice.js'
+import { setCredentials } from './slices/AuthSlice'
 import ChatPage from './components/ChatPage.jsx'
 import LoginPage from './components/LoginPage.jsx'
 import NotFoundPage from './components/NotFoundPage.jsx'
@@ -22,13 +22,11 @@ const App = () => {
       const user = JSON.parse(userRaw)
       if (token && token !== 'null' && user && typeof user === 'object' && user.username) {
         dispatch(setCredentials({ token, user }))
-      } 
-      else {
+      } else {
         localStorage.removeItem('user')
         localStorage.removeItem('token')
       }
-    } 
-    catch (e) {
+    } catch (e) {
       rollbar.error('Error parsing user from localStorage', e)
       localStorage.removeItem('user')
       localStorage.removeItem('token')

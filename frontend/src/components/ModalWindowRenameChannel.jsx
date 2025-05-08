@@ -1,17 +1,21 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import {
+  Formik, Form, Field, ErrorMessage,
+} from 'formik'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 
-const RenameChannelModal = ({ show, onHide, onRenameChannel, existingChannels, currentName }) => {
+const RenameChannelModal = ({
+  show, onHide, onRenameChannel, existingChannels, currentName,
+}) => {
   const { t } = useTranslation()
   const validationSchema = Yup.object({
     name: Yup.string()
       .min(3, `${t('modals.errors.min')}`)
       .max(20, `${t('modals.errors.max')}`)
       .required(`${t('modals.errors.required')}`)
-      .notOneOf(existingChannels.filter(name => name !== currentName), `${t('modals.errors.notOneOf')}`),
+      .notOneOf(existingChannels.filter((name) => name !== currentName), `${t('modals.errors.notOneOf')}`),
   })
 
   useEffect(() => {
@@ -32,7 +36,9 @@ const RenameChannelModal = ({ show, onHide, onRenameChannel, existingChannels, c
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>{t('modals.renameChannel.title')}</Modal.Title>
+        <Modal.Title>
+          {t('modals.renameChannel.title')}
+        </Modal.Title>
       </Modal.Header>
       <Formik
         initialValues={{ name: currentName }}
@@ -54,16 +60,18 @@ const RenameChannelModal = ({ show, onHide, onRenameChannel, existingChannels, c
                   className={`mb-2 form-control ${errors.name && touched.name ? 'is-invalid' : ''}`}
                   autoComplete="off"
                 />
-                <label htmlFor="name" className="visually-hidden">{t('modals.renameChannel.label')}</label>
+                <label htmlFor="name" className="visually-hidden">
+                  {t('modals.renameChannel.label')}
+                </label>
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
               </div>
             </Modal.Body>
             <Modal.Footer className="d-flex justify-content-end">
               <Button variant="secondary" type="button" onClick={onHide} className="me-2">
-              {t('modals.renameChannel.cancel')}
+                {t('modals.renameChannel.cancel')}
               </Button>
               <Button variant="primary" type="submit" id="rename-submit-btn" disabled={isSubmitting}>
-              {t('modals.renameChannel.submit')}
+                {t('modals.renameChannel.submit')}
               </Button>
             </Modal.Footer>
           </Form>
