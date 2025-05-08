@@ -68,6 +68,7 @@ export const ChatPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (!token) return;
     const fetchChatData = async () => {
       try {
         const config = {
@@ -105,6 +106,7 @@ export const ChatPage = () => {
     if (!channelToRename) return;
   
     try {
+      console.log(`token: ${token}`)
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const cleanName = leoProfanity.clean(newName);
       const response = await axios.patch(`/api/v1/channels/${channelToRename.id}`, { name: cleanName }, config);

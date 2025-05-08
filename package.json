@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx start-server -s ./frontend/dist -p 5002"
+    "start": "npx start-server -s ./frontend/dist -p 5002",
+    "build": "npm run build --prefix frontend",
+    "postinstall": "cd frontend && npm ci"
   },
   "repository": {
     "type": "git",
