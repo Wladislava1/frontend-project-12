@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectCurrentToken, selectCurrentUser } from '../slices/AuthSlice.js'
 import { setChannels, addChannel, removeChannel, selectChannels } from '../slices/ChannelsSlice.js'
@@ -85,7 +85,8 @@ const ChatPage = () => {
 
         const messagesResponse = await axios.get('/api/v1/messages', config)
         dispatch(setMessages(messagesResponse.data))
-      } catch(error) {
+      } 
+      catch (error) {
         rollbar.error('Error fetching chat data', error)
       }
     }
@@ -118,7 +119,8 @@ const ChatPage = () => {
       setRenameModalShow(false)
       setChannelToRename(null)
       toast.success(t('channels.renamed'))
-    } catch(error) {
+    } 
+    catch(error) {
       rollbar.error('Error renaming channel', error)
       toast.error(t('channels.error'))
     }
@@ -134,7 +136,8 @@ const ChatPage = () => {
       setSelectedChannelId(response.data.id)
       setModalShow(false) 
       toast.success(t('channels.created'))
-    } catch (error) {
+    } 
+    catch (error) {
       rollbar.error('Error adding channel', error)
       toast.error(t('channels.error'))
     }
@@ -155,7 +158,8 @@ const ChatPage = () => {
       setDeleteModalShow(false)
       setChannelToDelete(null)
       toast.success(t('channels.deleted'))
-    } catch (error) {
+    } 
+    catch (error) {
       rollbar.error('Error deleting channel', error)
       toast.error(t('channels.error'))
     }
@@ -184,11 +188,13 @@ const ChatPage = () => {
           username: user.username,
         },
         config
-      ),
+      )
       setNewMessage('')
-    } catch (error) {
+    } 
+    catch (error) {
       rollbar.error('Error sending message', error)
-    } finally {
+    } 
+    finally {
       setIsSubmitting(false)
     }
   }
@@ -229,48 +235,48 @@ const ChatPage = () => {
                       type="button"
                       className={`w-100 rounded-0 text-start btn text-truncate ${
                         channel.id === selectedChannelId ? 'btn-secondary' : ''
-                      }`}
-                      onClick={() => setSelectedChannelId(channel.id)}
-                    >
-                      <span># </span>{channel.name}
-                    </button>
-                    {channel.removable && (
-                    <div className="position-relative">
-                      <button
-                        type="button"
-                        className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn rounded-0 ${
-                        channel.id === selectedChannelId ? 'btn-secondary' : 'btn-light'}`}
-                        aria-label={`Управление каналом ${channel.name}`}
-                        onClick={() => setMenuChannelId(menuChannelId === channel.id ? null : channel.id)}
+                        }`}
+                        onClick={() => setSelectedChannelId(channel.id)}
                       >
-                        <span className="visually-hidden">{t('channels.manageChannelAriaLabel')}</span>
+                        <span># </span>{channel.name}
                       </button>
-
-                      {menuChannelId === channel.id && (
-                        <div 
-                          ref={menuRef}
-                          className="position-absolute bg-white border rounded shadow-sm end-0"
-                          style={{ top: '100%', zIndex: 1000 }}
+                      {channel.removable && (
+                      <div className="position-relative">
+                        <button
+                          type="button"
+                          className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn rounded-0 ${
+                          channel.id === selectedChannelId ? 'btn-secondary' : 'btn-light'}`}
+                          aria-label={`Управление каналом ${channel.name}`}
+                          onClick={() => setMenuChannelId(menuChannelId === channel.id ? null : channel.id)}
                         >
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() => {
-                              setChannelToDelete(channel.id)
-                              setDeleteModalShow(true)       
-                              setMenuChannelId(null)         
-                            }}
+                          <span className="visually-hidden">{t('channels.manageChannelAriaLabel')}</span>
+                        </button>
+
+                        {menuChannelId === channel.id && (
+                          <div 
+                            ref={menuRef}
+                            className="position-absolute bg-white border rounded shadow-sm end-0"
+                            style={{ top: '100%', zIndex: 1000 }}
                           >
-                            {t('channels.delete')}
-                          </button>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() => {
-                              openRenameModal(channel)
-                              setMenuChannelId(null)
-                            }}
-                          >
+                            <button
+                              type="button"
+                              className="dropdown-item"
+                              onClick={() => {
+                                setChannelToDelete(channel.id)
+                                setDeleteModalShow(true)       
+                                setMenuChannelId(null)         
+                              }}
+                            >
+                              {t('channels.delete')}
+                            </button>
+                            <button
+                              type="button"
+                              className="dropdown-item"
+                              onClick={() => {
+                                openRenameModal(channel)
+                                setMenuChannelId(null)
+                              }}
+                            >
                             {t('channels.rename')}
                           </button>
                         </div>
