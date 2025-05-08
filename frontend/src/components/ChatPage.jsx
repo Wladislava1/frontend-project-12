@@ -115,7 +115,7 @@ const ChatPage = () => {
       const response = await axios.patch(`/api/v1/channels/${channelToRename.id}`, { name: cleanName }, config)
 
       dispatch(setChannels(
-        channels.map((ch) => (ch.id === channelToRename.id ? response.data : ch)),
+        channels.map(ch => (ch.id === channelToRename.id ? response.data : ch)),
       ))
 
       setRenameModalShow(false)
@@ -154,7 +154,7 @@ const ChatPage = () => {
 
       dispatch(removeChannel(channelToDelete))
       if (selectedChannelId === channelToDelete) {
-        const updatedChannels = channels.filter((ch) => ch.id !== channelToDelete)
+        const updatedChannels = channels.filter(ch => ch.id !== channelToDelete)
         setSelectedChannelId(updatedChannels.length > 0 ? updatedChannels[0].id : null)
       }
       setDeleteModalShow(false)
@@ -168,7 +168,7 @@ const ChatPage = () => {
   }
 
   const filteredMessages = messages.filter(
-    (msg) => msg.channelId === selectedChannelId,
+    msg => msg.channelId === selectedChannelId,
   )
 
   const handleSendMessage = async (e) => {
@@ -229,12 +229,12 @@ const ChatPage = () => {
               <AddChannelModal
                 show={modalShow}
                 onHide={() => setModalShow(false)}
-                existingChannels={channels.map((ch) => ch.name)}
+                existingChannels={channels.map(ch => ch.name)}
                 onAddChannel={handleAddChannel}
               />
             </div>
             <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
-              {channels.map((channel) => (
+              {channels.map(channel => (
                 <li key={channel.id} className="nav-item w-100">
                   <div className="d-flex align-items-center">
                     <button
@@ -308,7 +308,7 @@ const ChatPage = () => {
                 <p className="m-0">
                   <b>
                     {' '}
-                    {channels.find((ch) => ch.id === selectedChannelId)?.name || ''}
+                    {channels.find(ch => ch.id === selectedChannelId)?.name || ''}
                   </b>
                 </p>
                 <span className="text-muted">
@@ -316,7 +316,7 @@ const ChatPage = () => {
                 </span>
               </div>
               <div id="messages-box" className="chat-messages overflow-auto px-5 ">
-                {filteredMessages.map((msg) => (
+                {filteredMessages.map(msg => (
                   <div key={msg.id} className="text-break mb-2">
                     <b>
                       {msg.username}
@@ -335,7 +335,7 @@ const ChatPage = () => {
                       placeholder={t('messages.newMessagePlaceholder')}
                       className="border-0 p-0 ps-2 form-control"
                       value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
+                      onChange={e => setNewMessage(e.target.value)}
                       disabled={isSubmitting}
                     />
                     <button type="submit" className="btn btn-group-vertical" disabled={isSubmitting || !newMessage.trim()}>
@@ -362,7 +362,7 @@ const ChatPage = () => {
         show={renameModalShow}
         onHide={() => setRenameModalShow(false)}
         onRenameChannel={handleRenameChannel}
-        existingChannels={channels.map((ch) => ch.name)}
+        existingChannels={channels.map(ch => ch.name)}
         currentName={channelToRename?.name || ''}
       />
     </div>
