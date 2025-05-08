@@ -53,7 +53,7 @@ export const ChatPage = () => {
   }, []);
 
   useEffect(() => {
-    const socketConnection = io('http://localhost:5002');
+    const socketConnection = io('http://localhost:5001');
     setSocket(socketConnection);
 
     socketConnection.on('newMessage', (newMessage) => {
