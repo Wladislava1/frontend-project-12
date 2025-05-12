@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { Formik, Form, Field } from 'formik'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { useRollbar } from '@rollbar/react'
@@ -13,6 +13,7 @@ const LoginPage = () => {
   const [error, setError] = useState(false)
   const { t } = useTranslation()
   const rollbar = useRollbar()
+  const navigate = useNavigate()
   const { handleLogout, handleLogin, user } = useAuth()
 
   return (
@@ -34,6 +35,7 @@ const LoginPage = () => {
                 const { token, username } = response.data
                 const user = { username }
                 handleLogin(user, token)
+                navigate(routes.homePage(), { replace: true })
               }
               catch (error) {
                 if (!error.response) {
@@ -108,7 +110,7 @@ const LoginPage = () => {
               {t('login.noAccount')}
               {' '}
             </span>
-            <Link to="/signup">
+            <Link to={routes.signupPage()}>
               {t('login.signup')}
             </Link>
           </div>

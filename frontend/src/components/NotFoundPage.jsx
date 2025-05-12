@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import Navbar from './NavBar.jsx'
 import useAuth from '../useAuth'
 import iSvg from '../assets/i.svg'
+import { routes } from '../api/routes.js'
 
 const NotFoundPage = () => {
   const { t } = useTranslation()
@@ -18,7 +19,7 @@ const NotFoundPage = () => {
         <p className="text-muted">
           {t('notFound.descriptionLink')}
           {' '}
-          <a href="/">
+          <a href={routes.homePage()}>
             {t('notFound.descriptionLink1')}
           </a>
         </p>

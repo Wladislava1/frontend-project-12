@@ -6,4 +6,7 @@ export const routes = {
   channels: () => `${API_BASE}/channels`,
   channelById: id => `${API_BASE}/channels/${id}`,
   messages: () => `${API_BASE}/messages`,
+  homePage: () => '/',
+  loginPage: () => '/login',
+  signupPage: () => '/signup',
 }

@@ -46,7 +46,7 @@ const SignupPage = () => {
       dispatch(setCredentials({ user, token }))
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(user))
-      navigate('/', { replace: true })
+      navigate(routes.homePage(), { replace: true })
     }
     catch (error) {
       rollbar.error('Signup error', error)

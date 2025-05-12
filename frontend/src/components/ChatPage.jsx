@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import leoProfanity from 'leo-profanity'
 import { useRollbar } from '@rollbar/react'
-import { selectCurrentToken, selectCurrentUser } from '../slices/AuthSlice'
 import {
   setChannels, addChannel, removeChannel, selectChannels,
 } from '../slices/ChannelsSlice'

@@ -9,9 +9,10 @@ import store from './slices/index'
 import './i18n'
 
 const rollbarConfig = {
-  accessToken: 'fe02a2add61548e3bac3066cafe7a0924ea8351f03b889e4c8335341089667c6a1825abadc81d6578577d0a5dd53fc50',
-  environment: 'production',
+  accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
+  environment: import.meta.env.VITE_ROLLBAR_ENVIRONMENT,
 }
+
 const root = document.getElementById('root')
 
 ReactDOM.createRoot(root).render(
