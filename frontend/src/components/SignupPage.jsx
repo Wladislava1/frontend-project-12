@@ -5,10 +5,10 @@ import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik'
 import * as Yup from 'yup'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useRollbar } from '@rollbar/react'
-import { setCredentials, selectCurrentUser } from '../slices/AuthSlice'
+import { setCredentials } from '../slices/AuthSlice'
 import useAuth from '../useAuth'
 import Navbar from './NavBar.jsx'
 import { routes } from '../api/routes.js'
@@ -17,10 +17,9 @@ const SignupPage = () => {
   const [serverError, setServerError] = useState('')
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const user = useSelector(selectCurrentUser)
   const { t } = useTranslation()
   const rollbar = useRollbar()
-  const { handleLogout } = useAuth()
+  const { handleLogout, user } = useAuth()
 
   const validationSchema = Yup.object({
     username: Yup.string()

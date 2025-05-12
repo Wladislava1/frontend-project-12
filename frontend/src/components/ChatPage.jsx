@@ -20,8 +20,6 @@ import { routes } from '../api/routes.js'
 
 const ChatPage = () => {
   const menuRef = useRef(null)
-  const token = useSelector(selectCurrentToken)
-  const user = useSelector(selectCurrentUser)
   const channels = useSelector(selectChannels)
   const messages = useSelector(selectMessages)
   const [, setSocket] = useState(null)
@@ -38,7 +36,7 @@ const ChatPage = () => {
   const [channelToRename, setChannelToRename] = useState(null)
   const { t } = useTranslation()
   const rollbar = useRollbar()
-  const { handleLogout } = useAuth()
+  const { handleLogout, token, user } = useAuth()
   leoProfanity.loadDictionary('ru')
   leoProfanity.loadDictionary('en')
 

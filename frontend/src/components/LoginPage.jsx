@@ -1,31 +1,19 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { Formik, Form, Field } from 'formik'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { useRollbar } from '@rollbar/react'
-import { setCredentials, selectCurrentUser } from '../slices/AuthSlice'
 import { routes } from '../api/routes.js'
 import useAuth from '../useAuth'
 import Navbar from './NavBar.jsx'
 
 const LoginPage = () => {
   const [error, setError] = useState(false)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const user = useSelector(selectCurrentUser)
   const { t } = useTranslation()
   const rollbar = useRollbar()
-  const { handleLogout } = useAuth()
-
-  const handleLogin = (user, token) => {
-    dispatch(setCredentials({ user, token }))
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(user))
-    navigate('/', { replace: true })
-  }
+  const { handleLogout, handleLogin, user } = useAuth()
 
   return (
     <>

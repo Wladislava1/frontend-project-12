@@ -37,8 +37,6 @@ export default [
     rules: {
       '@stylistic/no-trailing-spaces': 'error',
       '@stylistic/keyword-spacing': 'error',
-      '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
-      '@stylistic/arrow-parens': ['error', 'always'],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/jsx-quotes': ['error', 'prefer-double'],
       '@stylistic/indent': ['error', 2],
@@ -51,7 +49,6 @@ export default [
       '@stylistic/eol-last': 'error',
       '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
       '@stylistic/semi': ['error', 'never'],
-      'no-unused-vars': 'warn',
       'no-console': 'off',
       'react/react-in-jsx-scope': 'off',
       'import/extensions': 'off',
