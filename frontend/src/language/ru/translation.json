@@ -46,7 +46,8 @@
       "messageCount_few": "{{count}} сообщения",
       "messageCount_many": "{{count}} сообщений",
       "newMessagePlaceholder": "Введите сообщение...",
-      "send": "Отправить"
+      "send": "Отправить",
+      "new_message": "Новое сообщение"
     },
     "modals": {
       "deleteChannel": {

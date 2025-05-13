@@ -262,7 +262,7 @@ const ChatPage = () => {
                           type="button"
                           className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn rounded-0 ${
                             channel.id === selectedChannelId ? 'btn-secondary' : 'btn-light'}`}
-                          aria-label={`Управление каналом ${channel.name}`}
+                          aria-label={t('channels.manageChannel')}
                           onClick={() => setMenuChannelId(
                             menuChannelId === channel.id ? null : channel.id,
                           )}
@@ -336,7 +336,7 @@ const ChatPage = () => {
                   <div className="input-group has-validation">
                     <input
                       name="body"
-                      aria-label="Новое сообщение"
+                      aria-label={t('messages.new_message')}
                       placeholder={t('messages.newMessagePlaceholder')}
                       className="border-0 p-0 ps-2 form-control"
                       value={newMessage}
