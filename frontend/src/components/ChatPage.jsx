@@ -16,6 +16,17 @@ import RenameChannelModal from './ModalWindowRenameChannel.jsx'
 import Navbar from './NavBar.jsx'
 import useAuth from '../useAuth'
 import { routes } from '../api/routes.js'
+import {
+  selectAddChannelModal,
+  selectRenameChannelModal,
+  selectDeleteChannelModal,
+  openAddChannelModal,
+  closeAddChannelModal,
+  openRenameChannelModal,
+  closeRenameChannelModal,
+  openDeleteChannelModal,
+  closeDeleteChannelModal,
+} from '../slices/ModalsSlice'
 
 const ChatPage = () => {
   const menuRef = useRef(null)
@@ -23,19 +34,17 @@ const ChatPage = () => {
   const messages = useSelector(selectMessages)
   const [, setSocket] = useState(null)
   const [isConnected, setIsConnected] = useState(true)
-  const [modalShow, setModalShow] = useState(false)
   const [menuChannelId, setMenuChannelId] = useState(null)
   const dispatch = useDispatch()
   const [selectedChannelId, setSelectedChannelId] = useState(null)
   const [newMessage, setNewMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [deleteModalShow, setDeleteModalShow] = useState(false)
-  const [channelToDelete, setChannelToDelete] = useState(null)
-  const [renameModalShow, setRenameModalShow] = useState(false)
-  const [channelToRename, setChannelToRename] = useState(null)
   const { t } = useTranslation()
   const rollbar = useRollbar()
   const { handleLogout, token, user } = useAuth()
+  const addChannelModalOpen = useSelector(selectAddChannelModal)
+  const renameChannelId = useSelector(selectRenameChannelModal)
+  const deleteChannelId = useSelector(selectDeleteChannelModal)
   leoProfanity.loadDictionary('ru')
   leoProfanity.loadDictionary('en')
 
@@ -96,28 +105,40 @@ const ChatPage = () => {
     }
   }, [token, dispatch])
 
-  const openRenameModal = (channel) => {
-    setChannelToRename(channel)
-    setRenameModalShow(true)
+  const openRenameModal = (channelId) => {
+    dispatch(openRenameChannelModal(channelId))
+  }
+  const closeRenameModal = () => {
+    dispatch(closeRenameChannelModal())
   }
 
-  const handleOpenModal = () => {
-    setModalShow(true)
+  const handleOpenAddChannelModal = () => {
+    dispatch(openAddChannelModal())
   }
+  const handleCloseAddChannelModal = () => {
+    dispatch(closeAddChannelModal())
+  }
+
+  const openDeleteModal = (channelId) => {
+    dispatch(openDeleteChannelModal(channelId))
+  }
+  const closeDeleteModal = () => {
+    dispatch(closeDeleteChannelModal())
+  }
+
   const handleRenameChannel = async (newName) => {
-    if (!channelToRename) return
+    if (!renameChannelId) return
 
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } }
       const cleanName = leoProfanity.clean(newName)
-      const response = await axios.patch(routes.channelById(channelToRename.id), { name: cleanName }, config)
+      const response = await axios.patch(routes.channelById(renameChannelId), { name: cleanName }, config)
 
       dispatch(setChannels(
-        channels.map(ch => (ch.id === channelToRename.id ? response.data : ch)),
+        channels.map(ch => (ch.id === renameChannelId ? response.data : ch)),
       ))
 
-      setRenameModalShow(false)
-      setChannelToRename(null)
+      closeRenameModal()
       toast.success(t('channels.renamed'))
     }
     catch (error) {
@@ -134,7 +155,7 @@ const ChatPage = () => {
       const response = await axios.post(routes.channels(), newChannelData, config)
       dispatch(addChannel(response.data))
       setSelectedChannelId(response.data.id)
-      setModalShow(false)
+      handleCloseAddChannelModal()
       toast.success(t('channels.created'))
     }
     catch (error) {
@@ -144,19 +165,18 @@ const ChatPage = () => {
   }
 
   const handleDeleteChannel = async () => {
-    if (!channelToDelete) return
+    if (!deleteChannelId) return
 
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } }
-      await axios.delete(routes.channelById(channelToDelete), config)
+      await axios.delete(routes.channelById(deleteChannelId), config)
 
-      dispatch(removeChannel(channelToDelete))
-      if (selectedChannelId === channelToDelete) {
-        const updatedChannels = channels.filter(ch => ch.id !== channelToDelete)
+      dispatch(removeChannel(deleteChannelId))
+      if (selectedChannelId === deleteChannelId) {
+        const updatedChannels = channels.filter(ch => ch.id !== deleteChannelId)
         setSelectedChannelId(updatedChannels.length > 0 ? updatedChannels[0].id : null)
       }
-      setDeleteModalShow(false)
-      setChannelToDelete(null)
+      closeDeleteModal()
       toast.success(t('channels.deleted'))
     }
     catch (error) {
@@ -215,7 +235,7 @@ const ChatPage = () => {
               <b>
                 {t('channels.title')}
               </b>
-              <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={handleOpenModal} aria-label={t('channels.addChannelAriaLabel')}>
+              <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={handleOpenAddChannelModal} aria-label={t('channels.addChannelAriaLabel')}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
                   <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"></path>
                   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
@@ -224,12 +244,14 @@ const ChatPage = () => {
                   +
                 </span>
               </button>
-              <AddChannelModal
-                show={modalShow}
-                onHide={() => setModalShow(false)}
-                existingChannels={channels.map(ch => ch.name)}
-                onAddChannel={handleAddChannel}
-              />
+              {addChannelModalOpen && (
+                <AddChannelModal
+                  show={addChannelModalOpen}
+                  onHide={handleCloseAddChannelModal}
+                  existingChannels={channels.map(ch => ch.name)}
+                  onAddChannel={handleAddChannel}
+                />
+              )}
             </div>
             <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
               {channels.map(channel => (
@@ -274,8 +296,7 @@ const ChatPage = () => {
                               type="button"
                               className="dropdown-item"
                               onClick={() => {
-                                setChannelToDelete(channel.id)
-                                setDeleteModalShow(true)
+                                openDeleteModal(channel.id)
                                 setMenuChannelId(null)
                               }}
                             >
@@ -285,7 +306,7 @@ const ChatPage = () => {
                               type="button"
                               className="dropdown-item"
                               onClick={() => {
-                                openRenameModal(channel)
+                                openRenameModal(channel.id)
                                 setMenuChannelId(null)
                               }}
                             >
@@ -351,18 +372,22 @@ const ChatPage = () => {
           </div>
         </div>
       </div>
-      <DeleteChannelModal
-        show={deleteModalShow}
-        onHide={() => setDeleteModalShow(false)}
-        onConfirm={handleDeleteChannel}
-      />
-      <RenameChannelModal
-        show={renameModalShow}
-        onHide={() => setRenameModalShow(false)}
-        onRenameChannel={handleRenameChannel}
-        existingChannels={channels.map(ch => ch.name)}
-        currentName={channelToRename?.name || ''}
-      />
+      {deleteChannelId && (
+        <DeleteChannelModal
+          show={Boolean(deleteChannelId)}
+          onHide={closeDeleteModal}
+          onConfirm={handleDeleteChannel}
+        />
+      )}
+      {renameChannelId && (
+        <RenameChannelModal
+          show={Boolean(renameChannelId)}
+          onHide={closeRenameModal}
+          onRenameChannel={handleRenameChannel}
+          existingChannels={channels.map(ch => ch.name)}
+          currentName={channels.find(ch => ch.id === renameChannelId)?.name || ''}
+        />
+      )}
     </div>
   )
 }
