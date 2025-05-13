@@ -1,19 +1,20 @@
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
-import { useRollbar } from '@rollbar/react'
 import { setCredentials } from './slices/AuthSlice'
+import { routes } from './api/routes.js'
 import ChatPage from './components/ChatPage.jsx'
 import LoginPage from './components/LoginPage.jsx'
 import NotFoundPage from './components/NotFoundPage.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx'
 import SignupPage from './components/SignupPage.jsx'
 import 'react-toastify/dist/ReactToastify.css'
+import RollbarContext from './context/RollbarContext.js'
 
 const App = () => {
   const dispatch = useDispatch()
-  const rollbar = useRollbar()
+  const rollbar = useContext(RollbarContext)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -38,12 +39,12 @@ const App = () => {
   return (
     <>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path={routes.loginPage()} element={<LoginPage />} />
+        <Route path={routes.signupPage()} element={<SignupPage />} />
         <Route element={<PrivateRoute />}>
-          <Route path="/" element={<ChatPage />} />
+          <Route path={routes.homePage()} element={<ChatPage />} />
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path={routes.notfoundPage()} element={<NotFoundPage />} />
       </Routes>
       <ToastContainer
         position="top-right"

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import {
@@ -7,18 +7,18 @@ import {
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { useRollbar } from '@rollbar/react'
 import { setCredentials } from '../slices/AuthSlice'
 import useAuth from '../useAuth'
 import Navbar from './NavBar.jsx'
 import { routes } from '../api/routes.js'
+import RollbarContext from '../context/RollbarContext.js'
 
 const SignupPage = () => {
   const [serverError, setServerError] = useState('')
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const rollbar = useRollbar()
+  const rollbar = useContext(RollbarContext)
   const { handleLogout, user } = useAuth()
 
   const validationSchema = Yup.object({

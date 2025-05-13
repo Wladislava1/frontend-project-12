@@ -1,10 +1,9 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import leoProfanity from 'leo-profanity'
-import { useRollbar } from '@rollbar/react'
 import {
   selectChannels,
   selectSelectedChannelId,
@@ -31,12 +30,13 @@ import {
 import ModalsContainer from './ModalsContainer.jsx'
 import addSvg from '../assets/add.svg'
 import arrowSvg from '../assets/ArrowRight.svg'
+import RollbarContext from '../context/RollbarContext.js'
 
 const ChatPage = () => {
   const menuRef = useRef(null)
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const rollbar = useRollbar()
+  const rollbar = useContext(RollbarContext)
   const channels = useSelector(selectChannels)
   const messages = useSelector(selectMessages)
   const renameChannelId = useSelector(selectRenameChannelModal)
@@ -47,8 +47,6 @@ const ChatPage = () => {
   const [menuChannelId, setMenuChannelId] = useState(null)
   const [newMessage, setNewMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  leoProfanity.loadDictionary('ru')
-  leoProfanity.loadDictionary('en')
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -56,9 +54,7 @@ const ChatPage = () => {
         setMenuChannelId(null)
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside)
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }

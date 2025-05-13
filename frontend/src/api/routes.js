@@ -9,4 +9,5 @@ export const routes = {
   homePage: () => '/',
   loginPage: () => '/login',
   signupPage: () => '/signup',
+  notfoundPage: () => '*',
 }

@@ -1,18 +1,18 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import axios from 'axios'
 import { Formik, Form, Field } from 'formik'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { useRollbar } from '@rollbar/react'
 import { routes } from '../api/routes.js'
 import useAuth from '../useAuth'
 import Navbar from './NavBar.jsx'
+import RollbarContext from '../context/RollbarContext.js'
 
 const LoginPage = () => {
   const [error, setError] = useState(false)
   const { t } = useTranslation()
-  const rollbar = useRollbar()
+  const rollbar = useContext(RollbarContext)
   const navigate = useNavigate()
   const { handleLogout, handleLogin, user } = useAuth()
 
