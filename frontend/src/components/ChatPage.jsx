@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { io } from 'socket.io-client'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -14,13 +13,14 @@ import {
   addChannel,
   removeChannel,
 } from '../slices/ChannelsSlice'
-import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice'
+import { setMessages, selectMessages } from '../slices/MessagesSlice'
 import AddChannelModal from './ModalWindowAddChannel.jsx'
 import DeleteChannelModal from './ModalWindowDelete.jsx'
 import RenameChannelModal from './ModalWindowRenameChannel.jsx'
 import Navbar from './NavBar.jsx'
 import useAuth from '../useAuth'
 import { routes } from '../api/routes.js'
+import useChatSocket from '../hook/useChatSocket.js'
 import {
   selectAddChannelModal,
   selectRenameChannelModal,
@@ -45,8 +45,7 @@ const ChatPage = () => {
   const deleteChannelId = useSelector(selectDeleteChannelModal)
   const selectedChannelId = useSelector(selectSelectedChannelId)
   const { handleLogout, token, user } = useAuth()
-  const [, setSocket] = useState(null)
-  const [isConnected, setIsConnected] = useState(true)
+  const { isConnected, sendMessage } = useChatSocket(dispatch, token)
   const [menuChannelId, setMenuChannelId] = useState(null)
   const [newMessage, setNewMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -66,21 +65,6 @@ const ChatPage = () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
-
-  useEffect(() => {
-    const socketConnection = io('http://localhost:5001')
-    setSocket(socketConnection)
-
-    socketConnection.on('newMessage', (newMessage) => {
-      dispatch(addMessage(newMessage))
-    })
-    socketConnection.on('connect', () => setIsConnected(true))
-    socketConnection.on('disconnect', () => setIsConnected(false))
-
-    return () => {
-      socketConnection.disconnect()
-    }
-  }, [dispatch])
 
   useEffect(() => {
     if (!token) return
@@ -201,15 +185,17 @@ const ChatPage = () => {
           Authorization: `Bearer ${token}`,
         },
       }
+      const cleanMessage = leoProfanity.clean(newMessage.trim())
       await axios.post(
         routes.messages(),
         {
-          body: leoProfanity.clean(newMessage.trim()),
+          body: cleanMessage,
           channelId: selectedChannelId,
           username: user.username,
         },
         config,
       )
+      sendMessage({ body: cleanMessage, channelId: selectedChannelId, username: user.username })
       setNewMessage('')
     }
     catch (error) {
