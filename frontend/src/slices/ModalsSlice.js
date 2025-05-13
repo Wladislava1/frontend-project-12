@@ -39,7 +39,7 @@ export const {
   openDeleteChannelModal,
   closeDeleteChannelModal,
 } = modalsSlice.actions
-export const selectAddChannelModal = (state) => state.modals.addChannel
-export const selectRenameChannelModal = (state) => state.modals.renameChannel
-export const selectDeleteChannelModal = (state) => state.modals.deleteChannel
+export const selectAddChannelModal = state => state.modals.addChannel
+export const selectRenameChannelModal = state => state.modals.renameChannel
+export const selectDeleteChannelModal = state => state.modals.deleteChannel
 export default modalsSlice.reducer
