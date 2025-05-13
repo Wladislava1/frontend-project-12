@@ -15,7 +15,8 @@ const initializeApp = async () => {
     })
 
     return { rollbar }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Ошибка при инициализации приложения:', error)
     throw error
   }
