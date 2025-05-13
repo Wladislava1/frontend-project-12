@@ -31,6 +31,6 @@ initI18n()
       </React.StrictMode>,
     )
   })
-  .catch(error => {
+  .catch((error) => {
     console.error('Ошибка инициализации i18n:', error)
   })
