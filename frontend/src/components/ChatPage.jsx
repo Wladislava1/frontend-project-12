@@ -32,6 +32,8 @@ import {
   openDeleteChannelModal,
   closeDeleteChannelModal,
 } from '../slices/ModalsSlice'
+import addSvg from '../assets/add.svg'
+import arrowSvg from '../assets/ArrowRight.svg'
 
 const ChatPage = () => {
   const menuRef = useRef(null)
@@ -223,10 +225,7 @@ const ChatPage = () => {
                 {t('channels.title')}
               </b>
               <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={handleOpenAddChannelModal} aria-label={t('channels.addChannelAriaLabel')}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
-                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"></path>
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                </svg>
+                <img src={addSvg} alt={t('chatPage.add.alt')} width={25} height={25} />
                 <span className="visually-hidden">
                   +
                 </span>
@@ -345,9 +344,7 @@ const ChatPage = () => {
                       disabled={isSubmitting}
                     />
                     <button type="submit" className="btn btn-group-vertical" disabled={isSubmitting || !newMessage.trim()}>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
-                        <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"></path>
-                      </svg>
+                      <img src={arrowSvg} alt={t('chatPage.send.alt')} width={20} height={20} />
                       <span className="visually-hidden">
                         {t('messages.send')}
                       </span>
