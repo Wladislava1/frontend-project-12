@@ -7,7 +7,12 @@ import { toast } from 'react-toastify'
 import leoProfanity from 'leo-profanity'
 import { useRollbar } from '@rollbar/react'
 import {
-  setChannels, addChannel, removeChannel, selectChannels,
+  selectChannels,
+  selectSelectedChannelId,
+  setSelectedChannelId,
+  setChannels,
+  addChannel,
+  removeChannel,
 } from '../slices/ChannelsSlice'
 import { setMessages, addMessage, selectMessages } from '../slices/MessagesSlice'
 import AddChannelModal from './ModalWindowAddChannel.jsx'
@@ -30,21 +35,21 @@ import {
 
 const ChatPage = () => {
   const menuRef = useRef(null)
-  const channels = useSelector(selectChannels)
-  const messages = useSelector(selectMessages)
-  const [, setSocket] = useState(null)
-  const [isConnected, setIsConnected] = useState(true)
-  const [menuChannelId, setMenuChannelId] = useState(null)
   const dispatch = useDispatch()
-  const [selectedChannelId, setSelectedChannelId] = useState(null)
-  const [newMessage, setNewMessage] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const { t } = useTranslation()
   const rollbar = useRollbar()
-  const { handleLogout, token, user } = useAuth()
+  const channels = useSelector(selectChannels)
+  const messages = useSelector(selectMessages)
   const addChannelModalOpen = useSelector(selectAddChannelModal)
   const renameChannelId = useSelector(selectRenameChannelModal)
   const deleteChannelId = useSelector(selectDeleteChannelModal)
+  const selectedChannelId = useSelector(selectSelectedChannelId)
+  const { handleLogout, token, user } = useAuth()
+  const [, setSocket] = useState(null)
+  const [isConnected, setIsConnected] = useState(true)
+  const [menuChannelId, setMenuChannelId] = useState(null)
+  const [newMessage, setNewMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   leoProfanity.loadDictionary('ru')
   leoProfanity.loadDictionary('en')
 
@@ -88,9 +93,6 @@ const ChatPage = () => {
         }
         const channelsResponse = await axios.get(routes.channels(), config)
         dispatch(setChannels(channelsResponse.data))
-        if (channelsResponse.data.length > 0) {
-          setSelectedChannelId(channelsResponse.data[0].id)
-        }
 
         const messagesResponse = await axios.get(routes.messages(), config)
         dispatch(setMessages(messagesResponse.data))
@@ -126,6 +128,10 @@ const ChatPage = () => {
     dispatch(closeDeleteChannelModal())
   }
 
+  const handleSelectChannel = (channelId) => {
+    dispatch(setSelectedChannelId(channelId))
+  }
+
   const handleRenameChannel = async (newName) => {
     if (!renameChannelId) return
 
@@ -154,7 +160,6 @@ const ChatPage = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } }
       const response = await axios.post(routes.channels(), newChannelData, config)
       dispatch(addChannel(response.data))
-      setSelectedChannelId(response.data.id)
       handleCloseAddChannelModal()
       toast.success(t('channels.created'))
     }
@@ -172,10 +177,6 @@ const ChatPage = () => {
       await axios.delete(routes.channelById(deleteChannelId), config)
 
       dispatch(removeChannel(deleteChannelId))
-      if (selectedChannelId === deleteChannelId) {
-        const updatedChannels = channels.filter(ch => ch.id !== deleteChannelId)
-        setSelectedChannelId(updatedChannels.length > 0 ? updatedChannels[0].id : null)
-      }
       closeDeleteModal()
       toast.success(t('channels.deleted'))
     }
@@ -262,7 +263,7 @@ const ChatPage = () => {
                       className={`w-100 rounded-0 text-start btn text-truncate ${
                         channel.id === selectedChannelId ? 'btn-secondary' : ''
                       }`}
-                      onClick={() => setSelectedChannelId(channel.id)}
+                      onClick={() => handleSelectChannel(channel.id)}
                     >
                       <span>
                         #
