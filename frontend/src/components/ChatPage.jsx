@@ -14,15 +14,11 @@ import {
   removeChannel,
 } from '../slices/ChannelsSlice'
 import { setMessages, selectMessages } from '../slices/MessagesSlice'
-import AddChannelModal from './ModalWindowAddChannel.jsx'
-import DeleteChannelModal from './ModalWindowDelete.jsx'
-import RenameChannelModal from './ModalWindowRenameChannel.jsx'
 import Navbar from './NavBar.jsx'
 import useAuth from '../useAuth'
 import { routes } from '../api/routes.js'
 import useChatSocket from '../hook/useChatSocket.js'
 import {
-  selectAddChannelModal,
   selectRenameChannelModal,
   selectDeleteChannelModal,
   openAddChannelModal,
@@ -32,6 +28,7 @@ import {
   openDeleteChannelModal,
   closeDeleteChannelModal,
 } from '../slices/ModalsSlice'
+import ModalsContainer from './ModalsContainer.jsx'
 import addSvg from '../assets/add.svg'
 import arrowSvg from '../assets/ArrowRight.svg'
 
@@ -42,7 +39,6 @@ const ChatPage = () => {
   const rollbar = useRollbar()
   const channels = useSelector(selectChannels)
   const messages = useSelector(selectMessages)
-  const addChannelModalOpen = useSelector(selectAddChannelModal)
   const renameChannelId = useSelector(selectRenameChannelModal)
   const deleteChannelId = useSelector(selectDeleteChannelModal)
   const selectedChannelId = useSelector(selectSelectedChannelId)
@@ -188,6 +184,8 @@ const ChatPage = () => {
         },
       }
       const cleanMessage = leoProfanity.clean(newMessage.trim())
+      console.log('Before:', newMessage)
+      console.log('After:', cleanMessage)
       await axios.post(
         routes.messages(),
         {
@@ -230,14 +228,6 @@ const ChatPage = () => {
                   +
                 </span>
               </button>
-              {addChannelModalOpen && (
-                <AddChannelModal
-                  show={addChannelModalOpen}
-                  onHide={handleCloseAddChannelModal}
-                  existingChannels={channels.map(ch => ch.name)}
-                  onAddChannel={handleAddChannel}
-                />
-              )}
             </div>
             <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
               {channels.map(channel => (
@@ -356,22 +346,12 @@ const ChatPage = () => {
           </div>
         </div>
       </div>
-      {deleteChannelId && (
-        <DeleteChannelModal
-          show={Boolean(deleteChannelId)}
-          onHide={closeDeleteModal}
-          onConfirm={handleDeleteChannel}
-        />
-      )}
-      {renameChannelId && (
-        <RenameChannelModal
-          show={Boolean(renameChannelId)}
-          onHide={closeRenameModal}
-          onRenameChannel={handleRenameChannel}
-          existingChannels={channels.map(ch => ch.name)}
-          currentName={channels.find(ch => ch.id === renameChannelId)?.name || ''}
-        />
-      )}
+      <ModalsContainer
+        channels={channels}
+        onAddChannel={handleAddChannel}
+        onRenameChannel={handleRenameChannel}
+        onDeleteChannel={handleDeleteChannel}
+      />
     </div>
   )
 }
